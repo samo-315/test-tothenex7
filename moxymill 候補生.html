@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>My Videos Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f5f2fa;
+    --card: #ffffff;
+    --ink: #29233f;
+    --ink-soft: #6b6480;
+    --accent: #ff5d7a;
+    --accent-soft: #ffe3e9;
+    --mint: #2fd8a0;
+    --mint-soft: #dffaf0;
+    --line: #eae6f4;
+    --radius: 18px;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 60px;
+  }
+  h1,h2,h3, .tab-btn, .brand{
+    font-family: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
+  }
+
+  /* Header */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg);
+    padding: 18px 16px 0;
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom: 12px;
+  }
+  .brand h1{
+    font-size: 20px;
+    font-weight: 900;
+    margin:0;
+    letter-spacing: .02em;
+  }
+  .updated-info{
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-align: right;
+    line-height: 1.4;
+  }
+  .toolbar{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-bottom: 12px;
+  }
+  .refresh-btn{
+    border:none;
+    background: var(--ink);
+    color: #fff;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+  }
+  .refresh-btn:active{ transform: scale(0.97); }
+  .refresh-btn.loading .spin{
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .status-msg{
+    font-size: 11px;
+    color: var(--accent);
+    flex:1;
+  }
+
+  /* Tabs */
+  .tabs{
+    display:flex;
+    background: var(--card);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 10px rgba(41,35,63,0.06);
+  }
+  .tab-btn{
+    flex:1;
+    border:none;
+    background: transparent;
+    color: var(--ink-soft);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 0;
+    border-radius: 999px;
+    transition: background .2s, color .2s;
+  }
+  .tab-btn.active{
+    background: var(--ink);
+    color: #fff;
+  }
+
+  /* Main */
+  main{ padding: 4px 16px 24px; }
+  .grid{
+    display:flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .card{
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow:hidden;
+    box-shadow: 0 2px 14px rgba(41,35,63,0.07);
+    border: 1px solid var(--line);
+  }
+  .video-wrap{
+    position:relative;
+    width:100%;
+    background:#000;
+    cursor:pointer;
+  }
+  .video-wrap.ratio-16-9{ aspect-ratio: 16/9; }
+  .video-wrap.ratio-9-16{ aspect-ratio: 9/16; max-height: 70vh; margin:0 auto; }
+  .video-wrap img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .video-wrap iframe{
+    width:100%; height:100%; border:none; display:block;
+  }
+  .play-badge{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .play-badge::after{
+    content:"";
+    width:58px; height:58px;
+    border-radius:50%;
+    background: rgba(255,255,255,0.92);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  }
+  .play-badge::before{
+    content:"";
+    position:absolute;
+    width:0; height:0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-left: 20px solid var(--ink);
+    margin-left: 6px;
+    z-index:1;
+  }
+
+  .stats-row{
+    display:flex;
+    gap: 10px;
+    padding: 12px 16px 4px;
+  }
+  .stat-pill{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+  .stat-pill.views{ background: var(--mint-soft); color:#0f8f66; }
+  .stat-pill.likes{ background: var(--accent-soft); color:#c9385a; }
+  .stat-pill .n{ font-variant-numeric: tabular-nums; }
+
+  .profile{
+    padding: 10px 16px 16px;
+  }
+  .profile-name{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    margin-bottom: 8px;
+  }
+  .profile-name .name{
+    font-size: 17px;
+    font-weight: 900;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+  }
+  .profile-name .reading{
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .profile-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 10px;
+    font-size: 12.5px;
+    margin-bottom: 10px;
+  }
+  .pf-item{ color: var(--ink-soft); }
+  .pf-item b{
+    display:block;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 13px;
+    overflow-wrap: break-word;
+  }
+  .pf-label{
+    font-size: 10.5px;
+    letter-spacing: .04em;
+  }
+  .comment{
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    position: relative;
+    overflow-wrap: break-word;
+  }
+  .comment::before{
+    content: "“";
+    font-family: Georgia, serif;
+    font-size: 22px;
+    color: var(--accent);
+    margin-right: 2px;
+  }
+
+  /* Summary */
+  .summary-toolbar{
+    display:flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .sort-btn{
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink-soft);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 999px;
+  }
+  .sort-btn.active{
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .summary-card{
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    box-shadow: 0 2px 14px rgba(41,35,63,0.07);
+    padding: 12px 14px;
+    display:flex;
+    align-items:center;
+    gap: 12px;
+  }
+  .summary-rank{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--ink-soft);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .summary-card.top1 .summary-rank{ background:#ffe08a; color:#7a5200; }
+  .summary-card.top2 .summary-rank{ background:#e3e3ee; color:#4a4763; }
+  .summary-card.top3 .summary-rank{ background:#f0d3b8; color:#7a4a1c; }
+  .summary-main{ flex:1; min-width:0; }
+  .summary-name{
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+    margin-bottom: 3px;
+    overflow-wrap: break-word;
+  }
+  .summary-breakdown{
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .summary-total{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    font-weight: 900;
+    font-size: 16px;
+    color: #c9385a;
+    flex-shrink:0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .empty-key-warning{
+    margin: 16px;
+    padding: 14px;
+    background: #fff4e5;
+    border: 1px solid #ffd699;
+    border-radius: 12px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #8a5a00;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>Video Dashboard</h1>
+    <div class="updated-info" id="updatedInfo">未取得</div>
+  </div>
+  <div class="toolbar">
+    <button class="refresh-btn" id="refreshBtn">
+      <span class="spin">⟳</span>再取得
+    </button>
+    <div class="status-msg" id="statusMsg"></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="normal">通常動画</button>
+    <button class="tab-btn" data-tab="shorts">ショート</button>
+    <button class="tab-btn" data-tab="summary">集計結果</button>
+  </div>
+  <div class="summary-toolbar" id="summaryToolbar" style="display:none;">
+    <button class="sort-btn active" data-sort="total">多い順</button>
+    <button class="sort-btn" data-sort="input">入力順</button>
+  </div>
+</header>
+
+<main>
+  <div id="keyWarning" class="empty-key-warning" style="display:none;">
+    APIキーが設定されていません。このファイル内の <code>YOUTUBE_API_KEY</code> を、取得したご自身のAPIキーに書き換えてください。
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<script>
+/* ============================================================
+   ここを書き換えてください
+   ============================================================ */
+
+// 1) YouTube Data API v3 のAPIキーをここに入れる
+const YOUTUBE_API_KEY = "YOUR_API_KEY_HERE";
+
+// 2) 動画情報。id は動画URLの v= の後ろ(ショートの場合は /shorts/ の後ろ)の文字列。
+//    プロフィール項目はそのまま自由に書き換えてください。
+const videoData = {
+  normal: Array.from({length: 27}, (_, i) => ({
+    id: "",                    // YouTubeの動画ID
+    name: `名前${i+1}`,
+    reading: "よみがな",
+    birthday: "YYYY-MM-DD",
+    hometown: "出身地",
+    specialty: "特技",
+    hobby: "趣味",
+    mbti: "----",
+    comment: "コメントをここに入力してください。"
+  })),
+  shorts: Array.from({length: 27}, (_, i) => ({
+    id: "",                    // YouTubeの動画ID(ショート)
+    name: `名前${i+1}`,
+    reading: "よみがな",
+    birthday: "YYYY-MM-DD",
+    hometown: "出身地",
+    specialty: "特技",
+    hobby: "趣味",
+    mbti: "----",
+    comment: "コメントをここに入力してください。"
+  }))
+};
+
+/* ============================================================
+   ここから下は基本的に触らなくてOKです
+   ============================================================ */
+
+const REFRESH_INTERVAL_MS = 60 * 60 * 1000; // 1時間ごと
+let currentTab = "normal";
+let summarySortMode = "total"; // "total" = 多い順 / "input" = 入力順
+
+const gridEl = document.getElementById("grid");
+const updatedInfoEl = document.getElementById("updatedInfo");
+const statusMsgEl = document.getElementById("statusMsg");
+const refreshBtn = document.getElementById("refreshBtn");
+const keyWarningEl = document.getElementById("keyWarning");
+const summaryToolbarEl = document.getElementById("summaryToolbar");
+
+function fmt(n){
+  if(n === undefined || n === null) return "--";
+  return Number(n).toLocaleString("ja-JP");
+}
+
+function render(){
+  if(currentTab === "summary"){
+    renderSummary();
+    return;
+  }
+  const list = videoData[currentTab];
+  const isShorts = currentTab === "shorts";
+  gridEl.innerHTML = list.map((v, idx) => {
+    const thumbUrl = v.id ? `https://img.youtube.com/vi/${v.id}/hqdefault.jpg` : "";
+    return `
+    <div class="card">
+      <div class="video-wrap ${isShorts ? 'ratio-9-16' : 'ratio-16-9'}"
+           data-tab="${currentTab}" data-idx="${idx}" data-id="${v.id}">
+        ${v.id
+          ? `<img src="${thumbUrl}" alt="${v.name}"><div class="play-badge"></div>`
+          : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:12px;">動画IDが未設定です</div>`
+        }
+      </div>
+      <div class="stats-row">
+        <div class="stat-pill views">👁 <span class="n" data-stat="views-${currentTab}-${idx}">${fmt(v.viewCount)}</span></div>
+        <div class="stat-pill likes">❤ <span class="n" data-stat="likes-${currentTab}-${idx}">${fmt(v.likeCount)}</span></div>
+      </div>
+      <div class="profile">
+        <div class="profile-name">
+          <span class="name">${v.name}</span>
+          <span class="reading">${v.reading}</span>
+        </div>
+        <div class="profile-grid">
+          <div class="pf-item"><span class="pf-label">生年月日</span><b>${v.birthday}</b></div>
+          <div class="pf-item"><span class="pf-label">出身地</span><b>${v.hometown}</b></div>
+          <div class="pf-item"><span class="pf-label">特技</span><b>${v.specialty}</b></div>
+          <div class="pf-item"><span class="pf-label">趣味</span><b>${v.hobby}</b></div>
+          <div class="pf-item"><span class="pf-label">MBTI</span><b>${v.mbti}</b></div>
+        </div>
+        <div class="comment">${v.comment}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  // 再生クリックのイベント登録
+  gridEl.querySelectorAll(".video-wrap").forEach(el => {
+    el.addEventListener("click", onPlayClick, { once: true });
+  });
+}
+
+function renderSummary(){
+  // normal[i] と shorts[i] を同一人物として合算(同じ並び順である前提)
+  const count = Math.max(videoData.normal.length, videoData.shorts.length);
+  const rows = [];
+  for(let i=0; i<count; i++){
+    const n = videoData.normal[i];
+    const s = videoData.shorts[i];
+    const normalLikes = Number(n?.likeCount) || 0;
+    const shortsLikes = Number(s?.likeCount) || 0;
+    rows.push({
+      name: n?.name || s?.name || `名前${i+1}`,
+      normalLikes,
+      shortsLikes,
+      total: normalLikes + shortsLikes
+    });
+  }
+  if(summarySortMode === "total"){
+    rows.sort((a, b) => b.total - a.total);
+  }
+  // "input" の場合はvideoDataの並び順のまま(何もしない)
+
+  gridEl.innerHTML = rows.map((r, i) => {
+    const rankClass = summarySortMode === "total"
+      ? (i === 0 ? "top1" : i === 1 ? "top2" : i === 2 ? "top3" : "")
+      : "";
+    return `
+    <div class="summary-card ${rankClass}">
+      <div class="summary-rank">${i + 1}</div>
+      <div class="summary-main">
+        <div class="summary-name">${r.name}</div>
+        <div class="summary-breakdown">通常 ${fmt(r.normalLikes)} ・ ショート ${fmt(r.shortsLikes)}</div>
+      </div>
+      <div class="summary-total">❤ ${fmt(r.total)}</div>
+    </div>`;
+  }).join("");
+}
+
+function onPlayClick(e){
+  const el = e.currentTarget;
+  const id = el.dataset.id;
+  if(!id) return;
+  el.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1"
+    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen></iframe>`;
+}
+
+function switchTab(tab){
+  currentTab = tab;
+  document.querySelectorAll(".tab-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.tab === tab);
+  });
+  summaryToolbarEl.style.display = tab === "summary" ? "flex" : "none";
+  render();
+}
+
+document.querySelectorAll(".tab-btn").forEach(b => {
+  b.addEventListener("click", () => switchTab(b.dataset.tab));
+});
+
+document.querySelectorAll(".sort-btn").forEach(b => {
+  b.addEventListener("click", () => {
+    summarySortMode = b.dataset.sort;
+    document.querySelectorAll(".sort-btn").forEach(x => x.classList.toggle("active", x === b));
+    renderSummary();
+  });
+});
+
+async function fetchStats(){
+  if(!YOUTUBE_API_KEY || YOUTUBE_API_KEY === "YOUR_API_KEY_HERE"){
+    keyWarningEl.style.display = "block";
+    return;
+  }
+  keyWarningEl.style.display = "none";
+
+  refreshBtn.classList.add("loading");
+  statusMsgEl.textContent = "取得中...";
+
+  // normal / shorts をまとめて、参照を保持しつつID配列を作る
+  const all = [];
+  ["normal","shorts"].forEach(tab=>{
+    videoData[tab].forEach((v, idx)=>{
+      if(v.id) all.push({tab, idx, id: v.id});
+    });
+  });
+
+  if(all.length === 0){
+    statusMsgEl.textContent = "動画IDが1件も設定されていません";
+    refreshBtn.classList.remove("loading");
+    return;
+  }
+
+  try{
+    // YouTube API は id パラメータに最大50件まで指定可能なので50件ずつに分割
+    const chunkSize = 50;
+    for(let i=0; i<all.length; i+=chunkSize){
+      const chunk = all.slice(i, i+chunkSize);
+      const ids = chunk.map(c=>c.id).join(",");
+      const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${ids}&key=${YOUTUBE_API_KEY}`;
+      const res = await fetch(url);
+      if(!res.ok){
+        const errBody = await res.json().catch(()=>({}));
+        throw new Error(errBody?.error?.message || `HTTPエラー ${res.status}`);
+      }
+      const data = await res.json();
+      const statMap = {};
+      (data.items || []).forEach(item=>{
+        statMap[item.id] = item.statistics;
+      });
+      chunk.forEach(c=>{
+        const s = statMap[c.id];
+        if(s){
+          videoData[c.tab][c.idx].viewCount = s.viewCount;
+          videoData[c.tab][c.idx].likeCount = s.likeCount;
+        }
+      });
+    }
+
+    // 表示中タブの数字だけ差し替え(再生中のiframeを壊さないようにテキストのみ更新)
+    if(currentTab === "summary"){
+      renderSummary();
+    }else{
+      videoData[currentTab].forEach((v, idx)=>{
+        const viewsEl = document.querySelector(`[data-stat="views-${currentTab}-${idx}"]`);
+        const likesEl = document.querySelector(`[data-stat="likes-${currentTab}-${idx}"]`);
+        if(viewsEl) viewsEl.textContent = fmt(v.viewCount);
+        if(likesEl) likesEl.textContent = fmt(v.likeCount);
+      });
+    }
+
+    const now = new Date();
+    updatedInfoEl.textContent = "最終更新 " + now.toLocaleString("ja-JP", {
+      month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit"
+    });
+    statusMsgEl.textContent = "";
+  }catch(err){
+    console.error(err);
+    statusMsgEl.textContent = "取得失敗: " + err.message;
+  }finally{
+    refreshBtn.classList.remove("loading");
+  }
+}
+
+refreshBtn.addEventListener("click", fetchStats);
+
+// 初期表示
+render();
+fetchStats();
+
+// 定期更新(開きっぱなし想定で1時間ごと)
+setInterval(fetchStats, REFRESH_INTERVAL_MS);
+</script>
+</body>
+</html>
