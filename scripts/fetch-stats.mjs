@@ -1,8 +1,9 @@
 // GitHub Actions から実行され、data.json の動画IDをもとに
-// YouTube Data API v3 で再生回数・いいね数を取得し、stats.json に保存するスクリプト。
+// YouTube Data API v3 で再生回数・いいね数を取得し、
+// stats.json(最新値)と history.json(推移の記録)を更新するスクリプト。
 // APIキーは環境変数 YOUTUBE_API_KEY (GitHub Secrets) から受け取る。
 
-import { readFileSync, writeFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 
 const apiKey = process.env.YOUTUBE_API_KEY;
 
@@ -52,10 +53,32 @@ for (let i = 0; i < ids.length; i += chunkSize) {
   });
 }
 
+const now = new Date().toISOString();
+
 const output = {
-  updatedAt: new Date().toISOString(),
+  updatedAt: now,
   byId,
 };
 
 writeFileSync("stats.json", JSON.stringify(output, null, 2));
 console.log(`stats.json を更新しました(${Object.keys(byId).length}件)`);
+
+// ---- history.json(推移データ)に今回分を追記 ----
+// 形式: { "動画ID": [ [取得時刻, 再生数, いいね数], ... ] }
+let history = {};
+if (existsSync("history.json")) {
+  try {
+    history = JSON.parse(readFileSync("history.json", "utf-8"));
+  } catch (e) {
+    console.error("history.json の読み込みに失敗したため、新規作成します。", e.message);
+    history = {};
+  }
+}
+
+Object.entries(byId).forEach(([vid, stat]) => {
+  if (!history[vid]) history[vid] = [];
+  history[vid].push([now, Number(stat.viewCount), Number(stat.likeCount)]);
+});
+
+writeFileSync("history.json", JSON.stringify(history));
+console.log(`history.json に追記しました(${Object.keys(byId).length}件分)`);
