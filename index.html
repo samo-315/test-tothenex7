@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-date-fns/3.0.0/chartjs-adapter-date-fns.bundle.min.js"></script>
 <style>
   :root{
     --bg: #f5f2fa;
@@ -181,6 +183,107 @@
   .stat-pill.views{ background: var(--mint-soft); color:#0f8f66; }
   .stat-pill.likes{ background: var(--accent-soft); color:#c9385a; }
   .stat-pill .n{ font-variant-numeric: tabular-nums; }
+  .graph-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink-soft);
+    font-size: 14px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .graph-btn:disabled{ opacity: 0.35; }
+
+  /* グラフのポップアップ */
+  .modal-overlay{
+    display:none;
+    position: fixed;
+    inset: 0;
+    background: rgba(41,35,63,0.45);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal-box{
+    width: 100%;
+    max-width: 480px;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: var(--bg);
+    border-radius: 20px 20px 0 0;
+    padding: 16px 16px 24px;
+  }
+  @media (min-width: 700px){
+    .modal-overlay{ align-items: center; }
+    .modal-box{ border-radius: 20px; }
+  }
+  .modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 12px;
+  }
+  .modal-title{
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+  }
+  .modal-close{
+    border:none;
+    background: var(--card);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .period-toolbar{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .period-btn{
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink-soft);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 700;
+    font-size: 11.5px;
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+  .period-btn.active{
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .modal-chart-card{
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    padding: 14px 10px;
+    margin-bottom: 14px;
+  }
+  .modal-chart-title{
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    margin: 0 6px 8px;
+  }
+  .modal-chart-wrap{ position: relative; height: 200px; }
+  .modal-empty{
+    text-align:center;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    padding: 24px 8px;
+  }
 
   .profile{
     padding: 10px 16px 16px;
@@ -361,6 +464,33 @@
   <div class="grid" id="grid"></div>
 </main>
 
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle"></div>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <div id="modalBody">
+      <div class="period-toolbar" id="periodToolbar">
+        <button class="period-btn" data-period="1">1日</button>
+        <button class="period-btn" data-period="3">3日</button>
+        <button class="period-btn active" data-period="7">7日</button>
+        <button class="period-btn" data-period="30">30日</button>
+        <button class="period-btn" data-period="all">全期間</button>
+      </div>
+      <div class="modal-chart-card">
+        <div class="modal-chart-title">👀 再生回数の推移</div>
+        <div class="modal-chart-wrap"><canvas id="modalViewsChart"></canvas></div>
+      </div>
+      <div class="modal-chart-card">
+        <div class="modal-chart-title">👍🏻 いいね数の推移</div>
+        <div class="modal-chart-wrap"><canvas id="modalLikesChart"></canvas></div>
+      </div>
+      <div class="modal-empty" id="modalEmpty" style="display:none;">まだ記録されたデータがありません。</div>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ============================================================
    表示ロジック(通常/ショート/集計結果)
@@ -411,6 +541,7 @@ function render(){
       <div class="stats-row">
         <div class="stat-pill views">👀 <span class="n" data-stat="views-${idx}">${fmt(p[viewsKey])}</span></div>
         <div class="stat-pill likes">👍🏻 <span class="n" data-stat="likes-${idx}">${fmt(p[likesKey])}</span></div>
+        <button class="graph-btn" data-idx="${idx}" ${vid ? "" : "disabled"}>📈</button>
       </div>
       <div class="profile">
         <div class="profile-name">
@@ -436,6 +567,9 @@ function render(){
 
   gridEl.querySelectorAll(".video-wrap").forEach(el => {
     el.addEventListener("click", onPlayClick, { once: true });
+  });
+  gridEl.querySelectorAll(".graph-btn").forEach(el => {
+    el.addEventListener("click", () => openGraphModal(Number(el.dataset.idx)));
   });
 }
 
@@ -501,6 +635,139 @@ document.querySelectorAll(".sort-btn").forEach(b => {
     renderSummary();
     window.scrollTo(0, 0); // タブ切り替え時は毎回一番上に戻す
   });
+});
+
+/* ============================================================
+   推移グラフのポップアップ
+   ============================================================ */
+
+let historyData = null;
+let historyLoading = null;
+let modalViewsChart = null;
+let modalLikesChart = null;
+let modalAllPoints = [];   // 現在開いている動画の全期間分のデータ(実データのみ、加工なし)
+let modalPeriodDays = 7;   // "1" | "3" | "7" | "30" | "all"
+
+const modalOverlayEl = document.getElementById("modalOverlay");
+const modalTitleEl = document.getElementById("modalTitle");
+const modalEmptyEl = document.getElementById("modalEmpty");
+const modalBodyEl = document.getElementById("modalBody");
+const periodToolbarEl = document.getElementById("periodToolbar");
+
+async function ensureHistoryLoaded(){
+  if(historyData) return historyData;
+  if(!historyLoading){
+    historyLoading = fetch("history.json", { cache: "no-store" })
+      .then(res => res.ok ? res.json() : {})
+      .catch(() => ({}));
+  }
+  historyData = await historyLoading;
+  return historyData;
+}
+
+function buildTrendDataset(points, valueIndex, color){
+  return {
+    // 実際に取得した時刻・値をそのまま使う(推定値による補間は行わない)
+    data: points.map(p => ({ x: p[0], y: p[valueIndex] })),
+    borderColor: color,
+    backgroundColor: color,
+    borderWidth: 2,
+    pointRadius: 0,
+    tension: 0.25,
+  };
+}
+
+const modalChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  animation: false,
+  interaction: { mode: "index", intersect: false },
+  plugins: { legend: { display: false } },
+  scales: {
+    x: {
+      type: "time",
+      time: {
+        unit: "hour",                      // 目盛りは1時間おき
+        tooltipFormat: "MM/dd HH:mm",       // ツールチップも日付+時刻
+        displayFormats: { hour: "MM/dd HH:mm" } // 軸ラベルも日付+時刻で表示
+      },
+      ticks: { font: { size: 9 }, maxRotation: 60, minRotation: 45 },
+      grid: { color: "#eae6f4" }
+    },
+    y: {
+      ticks: { font: { size: 10 } },
+      grid: { color: "#eae6f4" }
+    }
+  }
+};
+
+function filterByPeriod(points, period){
+  if(period === "all") return points;
+  const days = Number(period);
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return points.filter(p => new Date(p[0]).getTime() >= cutoff);
+}
+
+function drawModalCharts(){
+  const points = filterByPeriod(modalAllPoints, modalPeriodDays);
+
+  if(modalViewsChart){ modalViewsChart.destroy(); modalViewsChart = null; }
+  if(modalLikesChart){ modalLikesChart.destroy(); modalLikesChart = null; }
+
+  if(points.length === 0){
+    modalBodyEl.querySelectorAll(".modal-chart-card").forEach(el => el.style.display = "none");
+    modalEmptyEl.style.display = "block";
+    return;
+  }
+  modalBodyEl.querySelectorAll(".modal-chart-card").forEach(el => el.style.display = "block");
+  modalEmptyEl.style.display = "none";
+
+  modalViewsChart = new Chart(document.getElementById("modalViewsChart"), {
+    type: "line",
+    data: { datasets: [buildTrendDataset(points, 1, "#2fd8a0")] },
+    options: modalChartOptions
+  });
+  modalLikesChart = new Chart(document.getElementById("modalLikesChart"), {
+    type: "line",
+    data: { datasets: [buildTrendDataset(points, 2, "#ff5d7a")] },
+    options: modalChartOptions
+  });
+}
+
+periodToolbarEl.querySelectorAll(".period-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    modalPeriodDays = btn.dataset.period;
+    periodToolbarEl.querySelectorAll(".period-btn").forEach(b => b.classList.toggle("active", b === btn));
+    drawModalCharts();
+  });
+});
+
+async function openGraphModal(idx){
+  const isShorts = currentTab === "shorts";
+  const idKey = isShorts ? "shortsId" : "normalId";
+  const person = people[idx];
+  const vid = person[idKey];
+  if(!vid) return;
+
+  modalTitleEl.textContent = `${person.name}(${isShorts ? "ショート" : "通常動画"})`;
+  modalOverlayEl.classList.add("open");
+
+  // モーダルを開くたびに期間選択は「7日」にリセット
+  modalPeriodDays = "7";
+  periodToolbarEl.querySelectorAll(".period-btn").forEach(b => b.classList.toggle("active", b.dataset.period === "7"));
+
+  const history = await ensureHistoryLoaded();
+  modalAllPoints = history[vid] || [];
+  drawModalCharts();
+}
+
+function closeGraphModal(){
+  modalOverlayEl.classList.remove("open");
+}
+
+document.getElementById("modalClose").addEventListener("click", closeGraphModal);
+modalOverlayEl.addEventListener("click", (e) => {
+  if(e.target === modalOverlayEl) closeGraphModal();
 });
 
 /* ============================================================
