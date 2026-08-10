@@ -741,6 +741,8 @@ periodToolbarEl.querySelectorAll(".period-btn").forEach(btn => {
   });
 });
 
+let modalScrollY = 0; // モーダルを開いた瞬間のスクロール位置を覚えておく
+
 async function openGraphModal(idx){
   const isShorts = currentTab === "shorts";
   const idKey = isShorts ? "shortsId" : "normalId";
@@ -752,7 +754,13 @@ async function openGraphModal(idx){
   modalOverlayEl.classList.add("open");
 
   // ポップアップ表示中は、裏の一覧画面がスクロールしないようロックする
-  document.body.style.overflow = "hidden";
+  // (iOS Safariではoverflow:hiddenだけでは確実に効かないため、position:fixedで固定する)
+  modalScrollY = window.scrollY;
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${modalScrollY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
 
   // モーダルを開くたびに期間選択は「7日」にリセット
   modalPeriodDays = "7";
@@ -765,7 +773,14 @@ async function openGraphModal(idx){
 
 function closeGraphModal(){
   modalOverlayEl.classList.remove("open");
-  document.body.style.overflow = ""; // 背景のスクロールロックを解除
+
+  // 背景のスクロールロックを解除し、元の位置に戻す
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.left = "";
+  document.body.style.right = "";
+  document.body.style.width = "";
+  window.scrollTo(0, modalScrollY);
 }
 
 document.getElementById("modalClose").addEventListener("click", closeGraphModal);
