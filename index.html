@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>moxymill tothenex7 候補生一覧</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f5f2fa;
+    --card: #ffffff;
+    --ink: #29233f;
+    --ink-soft: #6b6480;
+    --accent: #ff5d7a;
+    --accent-soft: #ffe3e9;
+    --mint: #2fd8a0;
+    --mint-soft: #dffaf0;
+    --line: #eae6f4;
+    --radius: 18px;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 60px;
+  }
+  h1,h2,h3, .tab-btn, .brand{
+    font-family: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
+  }
+
+  /* Header */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg);
+    padding: 18px 16px 0;
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom: 12px;
+  }
+  .brand h1{
+    font-size: 20px;
+    font-weight: 900;
+    margin:0;
+    letter-spacing: .02em;
+  }
+  .updated-info{
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-align: right;
+    line-height: 1.4;
+  }
+  .status-msg{
+    font-size: 11px;
+    color: var(--accent);
+    min-height: 14px;
+    margin-bottom: 10px;
+  }
+
+  /* Tabs */
+  .tabs{
+    display:flex;
+    background: var(--card);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 10px rgba(41,35,63,0.06);
+  }
+  .tab-btn{
+    flex:1;
+    border:none;
+    background: transparent;
+    color: var(--ink-soft);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 0;
+    border-radius: 999px;
+    transition: background .2s, color .2s;
+  }
+  .tab-btn.active{
+    background: var(--ink);
+    color: #fff;
+  }
+
+  /* Summary toolbar */
+  .summary-toolbar{
+    display:flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .sort-btn{
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink-soft);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 999px;
+  }
+  .sort-btn.active{
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+
+  /* Main */
+  main{ padding: 4px 16px 24px; }
+  .grid{
+    display:flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .card{
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow:hidden;
+    box-shadow: 0 2px 14px rgba(41,35,63,0.07);
+    border: 1px solid var(--line);
+  }
+  .video-wrap{
+    position:relative;
+    width:100%;
+    background:#000;
+    cursor:pointer;
+  }
+  .video-wrap.ratio-16-9{ aspect-ratio: 16/9; }
+  .video-wrap.ratio-9-16{ aspect-ratio: 9/16; max-height: 70vh; margin:0 auto; }
+  .video-wrap img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .video-wrap iframe{
+    width:100%; height:100%; border:none; display:block;
+  }
+  .play-badge{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .play-badge::after{
+    content:"";
+    width:58px; height:58px;
+    border-radius:50%;
+    background: rgba(255,255,255,0.92);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  }
+  .play-badge::before{
+    content:"";
+    position:absolute;
+    width:0; height:0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-left: 20px solid var(--ink);
+    margin-left: 6px;
+    z-index:1;
+  }
+
+  .stats-row{
+    display:flex;
+    gap: 10px;
+    padding: 12px 16px 4px;
+  }
+  .stat-pill{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+  .stat-pill.views{ background: var(--mint-soft); color:#0f8f66; }
+  .stat-pill.likes{ background: var(--accent-soft); color:#c9385a; }
+  .stat-pill .n{ font-variant-numeric: tabular-nums; }
+
+  .profile{
+    padding: 10px 16px 16px;
+  }
+  .profile-name{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    margin-bottom: 8px;
+  }
+  .profile-name .name{
+    font-size: 17px;
+    font-weight: 900;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+  }
+  .profile-name .reading{
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .profile-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    font-size: 12.5px;
+    margin-bottom: 10px;
+  }
+  .pf-item{ color: var(--ink-soft); }
+  .pf-item b{
+    display:block;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 13px;
+    overflow-wrap: break-word;
+  }
+  .pf-label{
+    font-size: 10.5px;
+    letter-spacing: .04em;
+  }
+  .sns-link{
+    color: #e6396a;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .comment{
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    position: relative;
+    overflow-wrap: break-word;
+  }
+  /* Summary */
+  .summary-card{
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    box-shadow: 0 2px 14px rgba(41,35,63,0.07);
+    padding: 12px 14px;
+    display:flex;
+    align-items:center;
+    gap: 12px;
+  }
+  .summary-rank{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--ink-soft);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .summary-card.top1 .summary-rank{ background:#ffe08a; color:#7a5200; }
+  .summary-card.top2 .summary-rank{ background:#e3e3ee; color:#4a4763; }
+  .summary-card.top3 .summary-rank{ background:#f0d3b8; color:#7a4a1c; }
+  .summary-main{ flex:1; min-width:0; }
+  .summary-name{
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+    margin-bottom: 3px;
+    overflow-wrap: break-word;
+  }
+  .summary-breakdown{
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .summary-total{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    font-weight: 900;
+    font-size: 16px;
+    color: #c9385a;
+    flex-shrink:0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .empty-key-warning{
+    margin: 16px;
+    padding: 14px;
+    background: #fff4e5;
+    border: 1px solid #ffd699;
+    border-radius: 12px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #8a5a00;
+  }
+  
+  /* PC(横幅の広い画面)向けレイアウト */
+  @media (min-width: 700px){
+    header{
+      max-width: 900px;
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+    main{
+      max-width: 900px;
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+    .grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+    /* 集計結果タブは横幅いっぱいの1列リストのまま */
+    .summary-card{
+      grid-column: 1 / -1;
+    }
+    .video-wrap.ratio-9-16{
+      max-height: 520px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>to the nex7 候補生一覧</h1>
+    <div class="updated-info" id="updatedInfo">データ取得: --</div>
+  </div>
+  <div class="status-msg" id="statusMsg"></div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="normal">通常動画</button>
+    <button class="tab-btn" data-tab="shorts">ショート</button>
+    <button class="tab-btn" data-tab="summary">集計結果</button>
+  </div>
+  <div class="summary-toolbar" id="summaryToolbar" style="display:none;">
+    <button class="sort-btn active" data-sort="total">高評価数順</button>
+    <button class="sort-btn" data-sort="input">50音順</button>
+  </div>
+
+  <!--
+    再取得ボタンは一旦非表示にしています。復活させたい場合は
+    下記のコメントアウトを外し、CSSでの display:none を解除してください。
+
+  <div class="toolbar">
+    <button class="refresh-btn" id="refreshBtn">
+      <span class="spin">⟳</span>再取得
+    </button>
+  </div>
+  -->
+</header>
+
+<main>
+  <div id="keyWarning" class="empty-key-warning" style="display:none;"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<script>
+/* ============================================================
+   表示ロジック(通常/ショート/集計結果)
+   ============================================================ */
+
+let people = [];               // data.json の中身がここに入る
+let currentTab = "normal";     // "normal" | "shorts" | "summary"
+let summarySortMode = "total"; // "total" = 高評価数順 / "input" = 50音順
+
+const gridEl = document.getElementById("grid");
+const updatedInfoEl = document.getElementById("updatedInfo");
+const statusMsgEl = document.getElementById("statusMsg");
+const summaryToolbarEl = document.getElementById("summaryToolbar");
+
+function fmt(n){
+  if(n === undefined || n === null) return "--";
+  return Number(n).toLocaleString("ja-JP");
+}
+
+function formatDateTime(iso){
+  if(!iso) return "--";
+  const d = new Date(iso);
+  return d.toLocaleString("ja-JP", { month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit" });
+}
+
+function render(){
+  if(currentTab === "summary"){
+    renderSummary();
+    return;
+  }
+  const isShorts = currentTab === "shorts";
+  const idKey = isShorts ? "shortsId" : "normalId";
+  const viewsKey = isShorts ? "shortsViews" : "normalViews";
+  const likesKey = isShorts ? "shortsLikes" : "normalLikes";
+
+  gridEl.innerHTML = people.map((p, idx) => {
+    const vid = p[idKey];
+    const thumbUrl = vid ? `https://img.youtube.com/vi/${vid}/hqdefault.jpg` : "";
+    return `
+    <div class="card">
+      <div class="video-wrap ${isShorts ? 'ratio-9-16' : 'ratio-16-9'}"
+           data-idx="${idx}" data-id="${vid}">
+        ${vid
+          ? `<img src="${thumbUrl}" alt="${p.name}"><div class="play-badge"></div>`
+          : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:12px;">動画IDが未設定です</div>`
+        }
+      </div>
+      <div class="stats-row">
+        <div class="stat-pill views">👀 <span class="n" data-stat="views-${idx}">${fmt(p[viewsKey])}</span></div>
+        <div class="stat-pill likes">👍🏻 <span class="n" data-stat="likes-${idx}">${fmt(p[likesKey])}</span></div>
+      </div>
+      <div class="profile">
+        <div class="profile-name">
+          <span class="name">${p.name}</span>
+          <span class="reading">${p.reading}</span>
+        </div>
+        <div class="profile-grid">
+          <div class="pf-item"><span class="pf-label">生年月日</span><b>${p.birthday}</b></div>
+          <div class="pf-item"><span class="pf-label">出身地</span><b>${p.hometown}</b></div>
+          <div class="pf-item"><span class="pf-label">特技</span><b>${p.specialty}</b></div>
+          <div class="pf-item"><span class="pf-label">趣味</span><b>${p.hobby}</b></div>
+          <div class="pf-item"><span class="pf-label">MBTI</span><b>${p.mbti}</b></div>
+          ${(p.sns && p.sns.length) ? `
+          <div class="pf-item">
+            <span class="pf-label">SNS</span>
+            <b>${p.sns.map(s => `${s.platform} <a class="sns-link" href="${s.url}" target="_blank" rel="noopener noreferrer">${s.handle}</a>`).join("<br>")}</b>
+          </div>` : ""}
+        </div>
+        <div class="comment">${p.comment}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  gridEl.querySelectorAll(".video-wrap").forEach(el => {
+    el.addEventListener("click", onPlayClick, { once: true });
+  });
+}
+
+function renderSummary(){
+  const rows = people.map(p => {
+    const normalLikes = Number(p.normalLikes) || 0;
+    const shortsLikes = Number(p.shortsLikes) || 0;
+    return {
+      name: p.name,
+      normalLikes,
+      shortsLikes,
+      total: normalLikes + shortsLikes
+    };
+  });
+
+  if(summarySortMode === "total"){
+    rows.sort((a, b) => b.total - a.total);
+  }
+
+  gridEl.innerHTML = rows.map((r, i) => {
+    const rankClass = summarySortMode === "total"
+      ? (i === 0 ? "top1" : i === 1 ? "top2" : i === 2 ? "top3" : "")
+      : "";
+    return `
+    <div class="summary-card ${rankClass}">
+      <div class="summary-rank">${i + 1}</div>
+      <div class="summary-main">
+        <div class="summary-name">${r.name}</div>
+        <div class="summary-breakdown">通常 ${fmt(r.normalLikes)} ・ ショート ${fmt(r.shortsLikes)}</div>
+      </div>
+      <div class="summary-total">👍🏻 ${fmt(r.total)}</div>
+    </div>`;
+  }).join("");
+}
+
+function onPlayClick(e){
+  const el = e.currentTarget;
+  const id = el.dataset.id;
+  if(!id) return;
+  el.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1"
+    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen></iframe>`;
+}
+
+function switchTab(tab){
+  currentTab = tab;
+  document.querySelectorAll(".tab-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.tab === tab);
+  });
+  summaryToolbarEl.style.display = tab === "summary" ? "flex" : "none";
+  render();
+  window.scrollTo(0, 0); // タブ切り替え時は毎回一番上に戻す
+}
+
+document.querySelectorAll(".tab-btn").forEach(b => {
+  b.addEventListener("click", () => switchTab(b.dataset.tab));
+});
+
+document.querySelectorAll(".sort-btn").forEach(b => {
+  b.addEventListener("click", () => {
+    summarySortMode = b.dataset.sort;
+    document.querySelectorAll(".sort-btn").forEach(x => x.classList.toggle("active", x === b));
+    renderSummary();
+    window.scrollTo(0, 0); // タブ切り替え時は毎回一番上に戻す
+  });
+});
+
+/* ============================================================
+   データ読み込み(data.json / stats.json)
+   ============================================================ */
+
+async function loadData(){
+  const res = await fetch("data.json", { cache: "no-store" });
+  people = await res.json();
+}
+
+// 表示中タブの数字だけ差し替え(再生中のiframeを壊さないようにテキストのみ更新)
+function applyStatsToDom(){
+  if(currentTab === "summary"){
+    renderSummary();
+    return;
+  }
+  const isShorts = currentTab === "shorts";
+  const viewsKey = isShorts ? "shortsViews" : "normalViews";
+  const likesKey = isShorts ? "shortsLikes" : "normalLikes";
+  people.forEach((p, idx) => {
+    const viewsEl = document.querySelector(`[data-stat="views-${idx}"]`);
+    const likesEl = document.querySelector(`[data-stat="likes-${idx}"]`);
+    if(viewsEl) viewsEl.textContent = fmt(p[viewsKey]);
+    if(likesEl) likesEl.textContent = fmt(p[likesKey]);
+  });
+}
+
+async function loadStats(){
+  try{
+    statusMsgEl.textContent = "";
+    const res = await fetch("stats.json", { cache: "no-store" });
+    if(!res.ok) throw new Error(`stats.json の取得に失敗しました (HTTP ${res.status})`);
+    const json = await res.json();
+    const byId = json.byId || {};
+
+    people.forEach(p => {
+      if(p.normalId && byId[p.normalId]){
+        p.normalViews = byId[p.normalId].viewCount;
+        p.normalLikes = byId[p.normalId].likeCount;
+      }
+      if(p.shortsId && byId[p.shortsId]){
+        p.shortsViews = byId[p.shortsId].viewCount;
+        p.shortsLikes = byId[p.shortsId].likeCount;
+      }
+    });
+
+    updatedInfoEl.textContent = "データ取得: " + formatDateTime(json.updatedAt);
+    applyStatsToDom();
+  }catch(err){
+    console.error(err);
+    statusMsgEl.textContent = "統計データの取得に失敗しました: " + err.message;
+  }
+}
+
+const REFRESH_INTERVAL_MS = 30 * 60 * 1000; // 30分ごと(GitHub Actionsの実行間隔と合わせる)
+
+(async function init(){
+  try{
+    await loadData();
+    render();
+  }catch(err){
+    console.error(err);
+    statusMsgEl.textContent = "data.json の読み込みに失敗しました: " + err.message;
+    return;
+  }
+  loadStats();
+  setInterval(loadStats, REFRESH_INTERVAL_MS);
+})();
+
+/* ============================================================
+   【未使用・保管用コード】
+   以前使っていた「ブラウザから直接YouTube Data APIを呼ぶ」方式です。
+   将来、再取得ボタンやリアルタイム更新を復活させたい場合に参考にしてください。
+   このままでは動作しません(呼び出し箇所がどこからも呼ばれていません)。
+   ============================================================
+
+const YOUTUBE_API_KEY = "YOUR_API_KEY_HERE";
+
+async function fetchStatsLive(){
+  if(!YOUTUBE_API_KEY || YOUTUBE_API_KEY === "YOUR_API_KEY_HERE"){
+    return;
+  }
+
+  const all = [];
+  people.forEach((p, idx) => {
+    if(p.normalId) all.push({ idx, key: "normalId", statViews: "normalViews", statLikes: "normalLikes", id: p.normalId });
+    if(p.shortsId) all.push({ idx, key: "shortsId", statViews: "shortsViews", statLikes: "shortsLikes", id: p.shortsId });
+  });
+  if(all.length === 0) return;
+
+  const chunkSize = 50;
+  for(let i=0; i<all.length; i+=chunkSize){
+    const chunk = all.slice(i, i+chunkSize);
+    const ids = chunk.map(c=>c.id).join(",");
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${ids}&key=${YOUTUBE_API_KEY}`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error(`HTTPエラー ${res.status}`);
+    const data = await res.json();
+    const statMap = {};
+    (data.items || []).forEach(item => { statMap[item.id] = item.statistics; });
+    chunk.forEach(c => {
+      const s = statMap[c.id];
+      if(s){
+        people[c.idx][c.statViews] = s.viewCount;
+        people[c.idx][c.statLikes] = s.likeCount;
+      }
+    });
+  }
+
+  applyStatsToDom();
+  updatedInfoEl.textContent = "最終更新 " + new Date().toLocaleString("ja-JP", {
+    month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit"
+  });
+}
+
+// 再取得ボタンを復活させる場合は、HTML側のコメントアウトも解除したうえで
+// 以下のように紐づけてください。
+// document.getElementById("refreshBtn").addEventListener("click", fetchStatsLive);
+
+*/
+</script>
+</body>
+</html>
