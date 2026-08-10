@@ -751,6 +751,9 @@ async function openGraphModal(idx){
   modalTitleEl.textContent = `${person.name}(${isShorts ? "ショート" : "通常動画"})`;
   modalOverlayEl.classList.add("open");
 
+  // ポップアップ表示中は、裏の一覧画面がスクロールしないようロックする
+  document.body.style.overflow = "hidden";
+
   // モーダルを開くたびに期間選択は「7日」にリセット
   modalPeriodDays = "7";
   periodToolbarEl.querySelectorAll(".period-btn").forEach(b => b.classList.toggle("active", b.dataset.period === "7"));
@@ -762,6 +765,7 @@ async function openGraphModal(idx){
 
 function closeGraphModal(){
   modalOverlayEl.classList.remove("open");
+  document.body.style.overflow = ""; // 背景のスクロールロックを解除
 }
 
 document.getElementById("modalClose").addEventListener("click", closeGraphModal);
