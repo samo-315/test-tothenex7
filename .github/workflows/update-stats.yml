@@ -1,8 +1,8 @@
 name: Update YouTube Stats
 
 on:
-  schedule:
-    - cron: "*/30 * * * *"   # 30分ごと(実行時刻はGitHub側の混雑状況で多少前後します)
+  # schedule:
+  #  - cron: "*/30 * * * *"   # 30分ごと(実行時刻はGitHub側の混雑状況で多少前後します)
   workflow_dispatch: {}       # Actionsタブから手動実行したい時用
 
 permissions:
@@ -27,6 +27,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add stats.json
-          git diff --cached --quiet || git commit -m "Update stats.json"
+          git add stats.json history.json
+          git diff --cached --quiet || git commit -m "Update stats.json and history.json"
           git push
