@@ -22,13 +22,17 @@
     --radius: 18px;
   }
   *{ box-sizing: border-box; }
-  body{
+    body{
     margin:0;
     background: var(--bg);
     color: var(--ink);
     font-family: 'Noto Sans JP', sans-serif;
     -webkit-font-smoothing: antialiased;
     padding-bottom: 60px;
+  }
+  /* ポップアップ表示中だけ「引っ張って更新」ジェスチャーを無効化する */
+  body.modal-open{
+    overscroll-behavior-y: contain;
   }
   h1,h2,h3, .tab-btn, .brand{
     font-family: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
@@ -756,6 +760,7 @@ async function openGraphModal(idx){
   // ポップアップ表示中は、裏の一覧画面がスクロールしないようロックする
   // (iOS Safariではoverflow:hiddenだけでは確実に効かないため、position:fixedで固定する)
   modalScrollY = window.scrollY;
+  document.body.classList.add("modal-open");
   document.body.style.position = "fixed";
   document.body.style.top = `-${modalScrollY}px`;
   document.body.style.left = "0";
@@ -775,6 +780,7 @@ function closeGraphModal(){
   modalOverlayEl.classList.remove("open");
 
   // 背景のスクロールロックを解除し、元の位置に戻す
+  document.body.classList.remove("modal-open");
   document.body.style.position = "";
   document.body.style.top = "";
   document.body.style.left = "";
