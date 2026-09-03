@@ -1,8 +1,8 @@
 [
-  { "id": 1, "title": "曲名1", "genre": "ジャンル1", "jacket": "images/song01.jpg" },
-  { "id": 2, "title": "曲名2", "genre": "ジャンル2", "jacket": "images/song02.jpg" },
-  { "id": 3, "title": "曲名3", "genre": "ジャンル3", "jacket": "images/song03.jpg" },
-  { "id": 4, "title": "曲名4", "genre": "ジャンル4", "jacket": "images/song04.jpg" },
-  { "id": 5, "title": "曲名5", "genre": "ジャンル5", "jacket": "images/song05.jpg" },
-  { "id": 6, "title": "曲名6", "genre": "ジャンル6", "jacket": "images/song06.jpg" }
+  { "id": 1, "title": "Living Free", "genre": "POP", "jacket": "images/song01.jpg" },
+  { "id": 2, "title": "Knight Rising", "genre": "COOL", "jacket": "images/song02.jpg" },
+  { "id": 3, "title": "めろめろねって メロメロね", "genre": "SWEET", "jacket": "images/song03.jpg" },
+  { "id": 4, "title": "Higher", "genre": "CRUSH", "jacket": "images/song04.jpg" },
+  { "id": 5, "title": "Suger×Bitter", "genre": "CUTE", "jacket": "images/song05.jpg" },
+  { "id": 6, "title": "My Season", "genre": "SEXY", "jacket": "images/song06.jpg" }
 ]
