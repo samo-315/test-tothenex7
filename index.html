@@ -401,6 +401,54 @@
     line-height: 1.6;
     color: #8a5a00;
   }
+
+  /* 最終ランキング */
+.rank-row{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 14px rgba(41,35,63,0.07);
+  padding: 10px 14px;
+}
+.rank-num{
+  width: 30px;
+  flex-shrink:0;
+  text-align:center;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+.rank-photo{
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg);
+}
+.rank-name-btn{
+  border:none;
+  background:none;
+  text-align:left;
+  padding: 0;
+  display:flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rank-name-btn .rank-reading{
+  font-size: 10.5px;
+  color: var(--ink-soft);
+}
+.rank-name-btn .rank-name{
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  color: var(--ink);
+}
   
   /* PC(横幅の広い画面)向けレイアウト */
   @media (min-width: 700px){
@@ -426,6 +474,9 @@
     .summary-card{
       grid-column: 1 / -1;
     }
+    .rank-row{
+      grid-column: 1 / -1;
+    }
     .video-wrap.ratio-9-16{
       max-height: 520px;
     }
@@ -444,6 +495,7 @@
     <button class="tab-btn active" data-tab="normal">通常動画</button>
     <button class="tab-btn" data-tab="shorts">ショート</button>
     <button class="tab-btn" data-tab="summary">集計結果</button>
+    <button class="tab-btn" data-tab="ranking">最終ランキング</button>
   </div>
   <div class="summary-toolbar" id="summaryToolbar" style="display:none;">
     <button class="sort-btn active" data-sort="total">高評価数順</button>
@@ -494,6 +546,16 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="profileModalOverlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="profileModalTitle"></div>
+      <button class="modal-close" id="profileModalClose">✕</button>
+    </div>
+    <div id="profileModalBody"></div>
+  </div>
+</div>
+
 <script>
 /* ============================================================
    表示ロジック(通常/ショート/集計結果)
@@ -522,6 +584,10 @@ function formatDateTime(iso){
 function render(){
   if(currentTab === "summary"){
     renderSummary();
+    return;
+  }
+  if(currentTab === "ranking"){
+    renderRanking();
     return;
   }
   const isShorts = currentTab === "shorts";
@@ -607,6 +673,107 @@ function renderSummary(){
     </div>`;
   }).join("");
 }
+
+/* ============================================================
+   最終ランキング
+   ============================================================ */
+
+function renderRanking(){
+  const rows = people
+    .map((p, idx) => ({ p, idx, rank: p.finalRank }))
+    .filter(r => r.rank !== undefined && r.rank !== null && r.rank !== "")
+    .sort((a, b) => Number(a.rank) - Number(b.rank));
+
+  if(rows.length === 0){
+    gridEl.innerHTML = `<div class="modal-empty">まだ最終ランキングが設定されていません。</div>`;
+    return;
+  }
+
+  gridEl.innerHTML = rows.map(({ p, idx, rank }) => {
+    const photoFile = `images/person${String(idx + 1).padStart(2, "0")}.jpg`;
+    return `
+    <div class="rank-row">
+      <div class="rank-num">${rank}</div>
+      <img class="rank-photo" src="${photoFile}" alt="${p.name}">
+      <button class="rank-name-btn" data-idx="${idx}">
+        <span class="rank-reading">${p.reading}</span>
+        <span class="rank-name">${p.name}</span>
+      </button>
+    </div>`;
+  }).join("");
+
+  gridEl.querySelectorAll(".rank-name-btn").forEach(btn => {
+    btn.addEventListener("click", () => openProfileModal(Number(btn.dataset.idx)));
+  });
+}
+
+/* ============================================================
+   プロフィールポップアップ
+   ============================================================ */
+
+const profileModalOverlayEl = document.getElementById("profileModalOverlay");
+const profileModalTitleEl = document.getElementById("profileModalTitle");
+const profileModalBodyEl = document.getElementById("profileModalBody");
+
+function buildProfileHtml(p){
+  const snsHtml = (p.sns && p.sns.length) ? `
+    <div class="pf-item">
+      <span class="pf-label">SNS</span>
+      <b>${p.sns.map(s => `${s.platform} <a class="sns-link" href="${s.url}" target="_blank" rel="noopener noreferrer">${s.handle}</a>`).join("<br>")}</b>
+    </div>` : "";
+
+  return `
+    <div class="profile-name">
+      <span class="name">${p.name}</span>
+      <span class="reading">${p.reading}</span>
+    </div>
+    <div class="profile-grid">
+      <div class="pf-item"><span class="pf-label">生年月日</span><b>${p.birthday}</b></div>
+      <div class="pf-item"><span class="pf-label">出身地</span><b>${p.hometown}</b></div>
+      <div class="pf-item"><span class="pf-label">特技</span><b>${p.specialty}</b></div>
+      <div class="pf-item"><span class="pf-label">趣味</span><b>${p.hobby}</b></div>
+      <div class="pf-item"><span class="pf-label">MBTI</span><b>${p.mbti}</b></div>
+      ${snsHtml}
+    </div>
+    <div class="comment">${p.comment}</div>
+  `;
+}
+
+let profileScrollY = 0; // プロフィールポップアップ用のスクロール位置記憶(グラフ側とは独立)
+
+function openProfileModal(idx){
+  const p = people[idx];
+  profileModalTitleEl.textContent = p.name;
+  profileModalBodyEl.innerHTML = buildProfileHtml(p);
+  profileModalOverlayEl.classList.add("open");
+
+  // ポップアップ表示中は、裏の一覧画面がスクロールしないようロックする
+  profileScrollY = window.scrollY;
+  document.body.classList.add("modal-open");
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${profileScrollY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
+}
+
+function closeProfileModal(){
+  profileModalOverlayEl.classList.remove("open");
+
+  // 背景のスクロールロックを解除し、元の位置に戻す
+  document.body.classList.remove("modal-open");
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.left = "";
+  document.body.style.right = "";
+  document.body.style.width = "";
+  window.scrollTo(0, profileScrollY);
+}
+
+document.getElementById("profileModalClose").addEventListener("click", closeProfileModal);
+profileModalOverlayEl.addEventListener("click", (e) => {
+  if(e.target === profileModalOverlayEl) closeProfileModal();
+});
 
 function onPlayClick(e){
   const el = e.currentTarget;
