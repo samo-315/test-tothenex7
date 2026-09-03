@@ -549,17 +549,16 @@
   border-bottom: 1px solid var(--line);
 }
 .assignee-grid{
-  display:flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
 }
 .assignee-item{
-  width: 64px;
   text-align:center;
 }
 .assignee-photo{
-  width: 56px;
-  height: 56px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   object-fit: cover;
   background: var(--bg);
@@ -604,6 +603,9 @@
     }
     .video-wrap.ratio-9-16{
       max-height: 520px;
+    }
+    .assignee-grid{
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     }
   }
 </style>
@@ -831,7 +833,7 @@ function renderRanking(){
         <span class="rank-reading">${p.reading}</span>
         <span class="rank-name">${p.name}</span>
       </button>
-      <button class="rank-song-btn" data-idx="${idx}">課題曲</button>
+      ${p.withdrawalNote ? "" : `<button class="rank-song-btn" data-idx="${idx}">課題曲</button>`}
     </div>`;
   }).join("");
 
