@@ -1062,7 +1062,7 @@ function buildProfileHtml(p){
 
 function openProfileModal(idx){
   const p = people[idx];
-  profileModalTitleEl.textContent = p.name;
+  profileModalTitleEl.textContent = "プロフィール";
   profileModalBodyEl.innerHTML = buildProfileHtml(p);
   profileModalOverlayEl.classList.add("open");
   lockBodyScroll();
