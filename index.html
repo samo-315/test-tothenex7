@@ -730,13 +730,13 @@ function render(){
 
   gridEl.innerHTML = people.map((p, idx) => {
     const vid = p[idKey];
-    const thumbUrl = vid ? `https://img.youtube.com/vi/${vid}/hqdefault.jpg` : "";
+    const thumbUrl = vid ? `https://img.youtube.com/vi/${vid}/mqdefault.jpg` : "";
     return `
     <div class="card">
       <div class="video-wrap ${isShorts ? 'ratio-9-16' : 'ratio-16-9'}"
            data-idx="${idx}" data-id="${vid}">
         ${vid
-          ? `<img src="${thumbUrl}" alt="${p.name}"><div class="play-badge"></div>`
+          ? `<img src="${thumbUrl}" alt="${p.name}" loading="lazy"><div class="play-badge"></div>`
           : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:12px;">動画IDが未設定です</div>`
         }
       </div>
@@ -828,7 +828,7 @@ function renderRanking(){
     return `
     <div class="rank-row">
       <div class="rank-num">${rank}</div>
-      <img class="rank-photo" src="${photoFile}" alt="${p.name}">
+      <img class="rank-photo" src="${photoFile}" alt="${p.name}" loading="lazy">
       <button class="rank-name-btn" data-idx="${idx}">
         <span class="rank-reading">${p.reading}</span>
         <span class="rank-name">${p.name}</span>
@@ -916,13 +916,13 @@ async function openSongPopover(idx, btnEl){
     <div class="song-popover-row">
       <div class="song-popover-label">ボーカル</div>
       <div class="song-popover-jackets">
-        ${vocalJackets.map(src => `<img src="${src}" alt="">`).join("")}
+        ${vocalJackets.map(src => `<img src="${src}" alt="" loading="lazy">`).join("")}
       </div>
     </div>
     <div class="song-popover-row">
       <div class="song-popover-label">ダンス</div>
       <div class="song-popover-jackets">
-        ${danceJackets.map(src => `<img src="${src}" alt="">`).join("")}
+        ${danceJackets.map(src => `<img src="${src}" alt="" loading="lazy">`).join("")}
       </div>
     </div>
   `;
@@ -985,7 +985,7 @@ function renderAssigneeGrid(list){
     const photoFile = `images/person${String(idx + 1).padStart(2, "0")}.jpg`;
     return `
     <div class="assignee-item">
-      <img class="assignee-photo" src="${photoFile}" alt="${p.name}">
+      <img class="assignee-photo" src="${photoFile}" alt="${p.name}" loading="lazy">
       <div class="assignee-name">${p.name}</div>
     </div>`;
   }).join("");
@@ -1011,7 +1011,7 @@ async function renderSongs(){
     return `
     <div class="song-card">
       <div class="song-header">
-        <img class="song-jacket" src="${song.jacket}" alt="${song.title}">
+        <img class="song-jacket" src="${song.jacket}" alt="${song.title}" loading="lazy">
         <div class="song-title">${song.title}</div>
         <div class="song-genre">${song.genre}</div>
       </div>
