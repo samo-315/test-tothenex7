@@ -456,6 +456,56 @@
   color: var(--ink);
 }
 
+.rank-song-btn{
+  margin-left: auto;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink-soft);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 7px 12px;
+  border-radius: 999px;
+}
+.song-popover{
+  display: none;
+  position: absolute;
+  z-index: 150;
+  width: 190px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(41,35,63,0.18);
+  padding: 12px;
+}
+.song-popover.open{ display: block; }
+.song-popover-row{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.song-popover-row:last-child{ margin-bottom: 0; }
+.song-popover-label{
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  width: 34px;
+  flex-shrink:0;
+}
+.song-popover-jackets{
+  display:flex;
+  gap: 6px;
+}
+.song-popover-jackets img{
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--bg);
+}
+
 /* 課題曲 */
 .song-card{
   background: var(--card);
@@ -630,6 +680,7 @@
     <div id="profileModalBody"></div>
   </div>
 </div>
+<div class="song-popover" id="songPopover"></div>
 
 <script>
 /* ============================================================
@@ -779,12 +830,97 @@ function renderRanking(){
         <span class="rank-reading">${p.reading}</span>
         <span class="rank-name">${p.name}</span>
       </button>
+      <button class="rank-song-btn" data-idx="${idx}">課題曲</button>
     </div>`;
   }).join("");
 
   gridEl.querySelectorAll(".rank-name-btn").forEach(btn => {
     btn.addEventListener("click", () => openProfileModal(Number(btn.dataset.idx)));
   });
+  gridEl.querySelectorAll(".rank-song-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openSongPopover(Number(btn.dataset.idx), btn);
+    });
+  });
+}
+
+/* ============================================================
+   最終ランキング: 課題曲ポップアップ(ボタンの真上に表示)
+   ============================================================ */
+
+const songPopoverEl = document.getElementById("songPopover");
+let songPopoverScrollY = 0;
+
+document.addEventListener("click", (e) => {
+  if(!songPopoverEl.classList.contains("open")) return;
+  if(songPopoverEl.contains(e.target)) return;
+  closeSongPopover();
+});
+
+async function openSongPopover(idx, btnEl){
+  const p = people[idx];
+  const list = await ensureSongsLoaded();
+  const findJacket = (songId) => {
+    const song = list.find(s => s.id === songId);
+    return song ? song.jacket : "";
+  };
+
+  const vocalJackets = (p.vocalSongs || []).map(findJacket).filter(Boolean);
+  const danceJackets = (p.danceSongs || []).map(findJacket).filter(Boolean);
+
+  songPopoverEl.innerHTML = `
+    <div class="song-popover-row">
+      <div class="song-popover-label">ボーカル</div>
+      <div class="song-popover-jackets">
+        ${vocalJackets.map(src => `<img src="${src}" alt="">`).join("")}
+      </div>
+    </div>
+    <div class="song-popover-row">
+      <div class="song-popover-label">ダンス</div>
+      <div class="song-popover-jackets">
+        ${danceJackets.map(src => `<img src="${src}" alt="">`).join("")}
+      </div>
+    </div>
+  `;
+
+  // 位置を計算する(ボタンの真上に配置)
+  songPopoverEl.style.visibility = "hidden";
+  songPopoverEl.classList.add("open");
+  const rect = btnEl.getBoundingClientRect();
+  const popRect = songPopoverEl.getBoundingClientRect();
+
+  let left = rect.left + window.scrollX + rect.width / 2 - popRect.width / 2;
+  const minLeft = 8 + window.scrollX;
+  const maxLeft = document.documentElement.clientWidth - popRect.width - 8 + window.scrollX;
+  left = Math.max(minLeft, Math.min(left, maxLeft));
+
+  const top = rect.top + window.scrollY - popRect.height - 8;
+
+  songPopoverEl.style.left = `${left}px`;
+  songPopoverEl.style.top = `${top}px`;
+  songPopoverEl.style.visibility = "visible";
+
+  // ポップアップ表示中は、裏の一覧画面がスクロールしないようロックする
+  songPopoverScrollY = window.scrollY;
+  document.body.classList.add("modal-open");
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${songPopoverScrollY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
+}
+
+function closeSongPopover(){
+  songPopoverEl.classList.remove("open");
+
+  document.body.classList.remove("modal-open");
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.left = "";
+  document.body.style.right = "";
+  document.body.style.width = "";
+  window.scrollTo(0, songPopoverScrollY);
 }
 
 /* ============================================================
