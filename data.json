@@ -57,6 +57,9 @@
     "specialty": "歌唱、ギター、バスケットボール",
     "hobby": "音楽を聴く、作詞",
     "mbti": "ISTP",
+    "sns": [
+      { "platform": "TikTok", "handle": "@kiiiiiiiiii0915", "url": "https://www.tiktok.com/@kiiiiiiiiii0915" }
+    ],
     "comment": "緊張してますが、moxymillの皆さんが大切にされてきた楽曲へのリスペクトを忘れず、自分の表現としてしっかりとお届けできるよう挑戦したいです。"
   },
   {
@@ -70,7 +73,9 @@
     "hobby": "音楽を聴いたり、曲を作ってみたり、美味しい物を食べる事です。",
     "mbti": "ENFP",
     "sns": [
-      { "platform": "Instagram", "handle": "@sapinomi2028", "url": "https://instagram.com/sapinomi2028" }
+      { "platform": "Instagram", "handle": "@sapinomi2028", "url": "https://instagram.com/sapinomi2028" },
+      { "platform": "TikTok", "handle": "@satoukona__", "url": "https://www.tiktok.com/@satoukona__" },
+      { "platform": "X(旧Twitter)", "handle": "@eMJ7fCtvGIspx1s", "url": "https://www.x.com/eMJ7fCtvGIspx1s" }
     ],
     "comment": "こんにちは！ぼけーっとしてるので何を考えてるか分からないと言われますが、歌っている時や踊っている時はびっくりするギャップをお届けします。 目指せ！デビュー！よろしくお願いします！"
   },
@@ -85,7 +90,8 @@
     "hobby": "カフェ巡り、SNS投稿",
     "mbti": "ESFJ",
     "sns": [
-      { "platform": "Instagram", "handle": "@erina_il29", "url": "https://instagram.com/erina_il29" }
+      { "platform": "Instagram", "handle": "@erina_il29", "url": "https://instagram.com/erina_il29" },
+      { "platform": "TikTok", "handle": "@erina_07.29", "url": "https://www.tiktok.com/@erina_07.29" }
     ],
     "comment": "どんな環境でも1つ1つの経験を大切にしながら挑戦し続けています。 仲間と共に応援してくださる方に感動や笑顔を届けられるアーティストを目指します。"
   },
@@ -100,7 +106,9 @@
     "hobby": "ネイル、音楽鑑賞、散歩、ドライブ",
     "mbti": "ISFP",
     "sns": [
-      { "platform": "Instagram", "handle": "@mm_ino7", "url": "https://instagram.com/mm_ino7" }
+      { "platform": "Instagram", "handle": "@mm_ino7", "url": "https://instagram.com/mm_ino7" },
+      { "platform": "TikTok", "handle": "@mm_ino7", "url": "https://www.tiktok.com/@mm_ino7" },
+      { "platform": "X(旧Twitter)", "handle": "@mm_ino7", "url": "https://www.x.com/mm_ino7" }
     ],
     "comment": "歌うこと、踊ることが大好きです！何度も挑戦を続けてきたからこそ、このチャンスを大切にしたいです。私らしいパフォーマンスを全力で届けます！"
   },
@@ -116,7 +124,8 @@
     "mbti": "ENFP",
     "sns": [
       { "platform": "Instagram", "handle": "@lixp.o3", "url": "https://instagram.com/lixp.o3" },
-      { "platform": "TikTok", "handle": "@lixpo3", "url": "https://www.tiktok.com/@lixpo3" }
+      { "platform": "TikTok", "handle": "@lixpo3", "url": "https://www.tiktok.com/@lixpo3" },
+      { "platform": "X(旧Twitter)", "handle": "@lixpopo", "url": "https://www.x.com/lixpopo" }
     ],
     "comment": "歌ダンス共に未経験なので他のみんなより実力は劣っているとは思いますが、たくさん色んなことを吸収してカメレオンアイドルになります！推してくれたらうれシーサー‼️"
   },
@@ -131,7 +140,8 @@
     "hobby": "ミシン",
     "mbti": "INFP",
     "sns": [
-      { "platform": "Instagram", "handle": "@uniiq.7", "url": "https://instagram.com/uniiq.7" }
+      { "platform": "Instagram", "handle": "@uniiq.7", "url": "https://instagram.com/uniiq.7" },
+      { "platform": "TikTok", "handle": "@uniiq.7", "url": "https://www.tiktok.com/@uniiq.7" }
     ],
     "comment": "このオーディションを知って、諦めた夢にもう一度挑戦したいと思えました。歌もダンスもまだ未熟ですが、人を笑顔にし、応援してくださる方へ恩返しができるアーティストになりたいです。応援よろしくお願いします。"
   },
@@ -146,7 +156,8 @@
     "hobby": "空やお花の写真を撮る、沢山寝る",
     "mbti": "INFJ-T",
     "sns": [
-      { "platform": "Instagram", "handle": "@mi0wInv", "url": "https://instagram.com/mi0wInv" }
+      { "platform": "Instagram", "handle": "@mi0wlnv", "url": "https://instagram.com/mi0wlnv" },
+      { "platform": "TikTok", "handle": "@mil0ah", "url": "https://www.tiktok.com/@mil0ah" }
     ],
     "comment": "169cmの存在感と唯一無二のキャラクターで皆さんをメロメロにさせちゃいます。まだまだ未完成ですが誰よりも成長して「moxymill MIRUA」になるまでの過程を見守っていてください!"
   },
@@ -161,7 +172,9 @@
     "hobby": "フィルムカメラ、ゲーム、ネックレス作り、文章を書く、写真編集、曲をカバーする、漫画を読んで泣く、ひとりスタバ（ゴールド会員）、お菓子を食べる",
     "mbti": "ENFJ",
     "sns": [
-      { "platform": "Instagram", "handle": "@har_8.7", "url": "https://instagram.com/har_8.7" }
+      { "platform": "Instagram", "handle": "@har_8.7", "url": "https://instagram.com/har_8.7" },
+      { "platform": "TikTok", "handle": "@sugisugi_har", "url": "https://www.tiktok.com/@sugisugi_har" },
+      { "platform": "X(旧Twitter)", "handle": "@ch_han087", "url": "https://www.x.com/ch_han087" }
     ],
     "comment": "人生かけよう、今しかない、この思いで応募しました。自分が辛い時に救われた分、誰かの明日を照らせる存在になりたい。moxymillとして大きなステージを目指したい。自分らしく、全力で頑張ります⟡"
   },
@@ -175,6 +188,9 @@
     "specialty": "料理、人とすぐに打ち解けること",
     "hobby": "美容、愛犬と過ごすこと、ライブ鑑賞",
     "mbti": "ISTP",
+    "sns": [
+      { "platform": "X(旧Twitter)", "handle": "@_xxmmaoxx_", "url": "https://www.x.com/_xxmmaoxx_" }
+    ],
     "comment": "明るさと、負けず嫌いでコツコツ努力できるところが私の強みです。自分らしさを全力で届け、「もっと見たい」「応援したい」と思ってもらえる存在を目指します！"
   },
   {
@@ -187,6 +203,9 @@
     "specialty": "歌、服作り、人の小さな変化にすぐ気づくこと、ずっと喋れること、いつでもどこでも寝れること、友達の誕生日を覚えること、予定を立てると大体雨を降らせられること。",
     "hobby": "歌、ギター、漫画を読むこと、ネイルデザインやメイク道具、カラコンを探すこと、寝ること、食べること、観葉植物を育てること。",
     "mbti": "ENFP",
+    "sns": [
+      { "platform": "TikTok", "handle": "@wlrb_haru", "url": "https://www.tiktok.com/@wlrb_haru" }
+    ],
     "comment": "ひとつひとつの出会いと経験を大切にし、「私らしい」を表現した音楽を皆さんに届けたいです！！"
   },
   {
@@ -199,6 +218,10 @@
     "specialty": "歌、ダンス",
     "hobby": "美味しいものを食べること、映画ドラマみること、寝ること",
     "mbti": "ISFP-T",
+    "sns": [
+      { "platform": "Instagram", "handle": "@hiyoriii__05", "url": "https://instagram.com/hiyoriii__05" },
+      { "platform": "TikTok", "handle": "@hiyo__050", "url": "https://www.tiktok.com/@hiyo__050" }
+    ],
     "comment": "これまでメンバーの皆さんが積み重ねてこられた時間や思いを大切にして、リスペクトの気持ちを持って頑張りたいです。自分が新しい色になれるように、精一杯頑張ります。よろしくお願いいたします。"
   },
   {
@@ -212,7 +235,9 @@
     "hobby": "旅行、サウナ、音楽鑑賞、テトリス",
     "mbti": "ENTJ",
     "sns": [
-      { "platform": "Instagram", "handle": "@yuyu_dance", "url": "https://instagram.com/yuyu_dance" }
+      { "platform": "Instagram", "handle": "@yuyu_dance", "url": "https://instagram.com/yuyu_dance" },
+      { "platform": "TikTok", "handle": "@yuyu_dance", "url": "https://www.tiktok.com/@yuyu_dance" },
+      { "platform": "X(旧Twitter)", "handle": "@yuyu__dance", "url": "https://www.x.com/yuyu__dance" }
     ],
     "comment": "私らしく笑顔で感謝を忘れず 全力で最後まで頑張ります！！！ 是非あたたかく見守って下さい‎𖤐 ̖́-‬ 宜しくお願い致します！！"
   },
@@ -227,8 +252,9 @@
     "hobby": "抹茶カフェ巡り、温泉旅",
     "mbti": "ISTJ",
     "sns": [
-      { "platform": "Instagram", "handle": "@nanacon__26", "url": "https://instagram.com/nanacon__26" },
-      { "platform": "(旧Twitter)", "handle": "@nanacon__26", "url": "https://www.x.com/nanacon__26" }
+      { "platform": "Instagram", "handle": "@nanacon.26", "url": "https://instagram.com/nanacon.26" },
+      { "platform": "TikTok", "handle": "@nanacon.26", "url": "https://www.tiktok.com/@nanacon.26" },
+      { "platform": "X(旧Twitter)", "handle": "@nanacon__26", "url": "https://www.x.com/nanacon__26" }
     ],
     "comment": "私はmoxymillさんが大好きです。候補生の誰よりも愛を語れる自信があります。そして私は全国高校ソロダンスバトルで日本1をとったことがあります！ロックダンスなら私にお任せ下さい。"
   },
@@ -244,6 +270,7 @@
     "mbti": "INFJ",
     "sns": [
       { "platform": "Instagram", "handle": "@yuika_046", "url": "https://instagram.com/yuika_046" },
+      { "platform": "TikTok", "handle": "@yuika_046", "url": "https://www.tiktok.com/@yuika_046" },
       { "platform": "X(旧Twitter)", "handle": "@yuika_046", "url": "https://www.x.com/yuika_046" }
     ],
     "comment": "一瞬一瞬を大切に、見てくださる方の心を動かせるよう精一杯頑張ります。よろしくお願いします。"
@@ -305,7 +332,8 @@
     "hobby": "音楽を聴く、歌を歌う、温泉に行く",
     "mbti": "ENFP-A",
     "sns": [
-      { "platform": "Instagram", "handle": "@chanmomo22", "url": "https://instagram.com/chanmomo22" }
+      { "platform": "Instagram", "handle": "@chanmomo_22", "url": "https://instagram.com/chanmomo_22" },
+      { "platform": "TikTok", "handle": "@aimomo_22", "url": "https://www.tiktok.com/@aimomo_22" }
     ],
     "comment": "私にしかできない表現で、たくさんの方の心を動かせる存在になりたいです。歌とダンスを通して、私らしい魅力を届けmoxymillのメンバーとして輝けるよう全力で頑張ります。応援よろしくお願いします！"
   },
@@ -316,15 +344,12 @@
     "reading": "みやうち のわ",
     "birthday": "2008-09-16",
     "hometown": "東京",
-    "sns": [
-      { "platform": "Instagram", "handle": "@yuki_mode", "url": "https://instagram.com/yuki_mode" },
-      { "platform": "TikTok", "handle": "@yuki_mode", "url": "https://www.tiktok.com/@yuki_mode" }
-    ],
     "specialty": "目のイラストを描く、肩甲骨同士をくっつける、アイスの早食い、感情系の表現",
     "hobby": "映画鑑賞、夜中に音楽を聴きながら浸る、空の写真を撮る",
     "mbti": "INFJ",
     "sns": [
-      { "platform": "Instagram", "handle": "@n00__i", "url": "https://instagram.com/n00__i" }
+      { "platform": "Instagram", "handle": "@n00__i", "url": "https://instagram.com/n00__i" },
+      { "platform": "TikTok", "handle": "@n00__i", "url": "https://www.tiktok.com/@n00__i" }
     ],
     "comment": "私はあなたの希望の羽のような存在になりたいです。幼いころから目指してきた夢でやっとスタートラインに立てました。ありのままの姿で表現して、向き合って、継いで、新しい未来へ共に駆け抜けたいです！"
   },
@@ -355,7 +380,8 @@
     "hobby": "ショッピング、カフェ巡り、ドラマ鑑賞",
     "mbti": "ESTJ",
     "sns": [
-      { "platform": "Instagram", "handle": "@hjmgfyls2", "url": "https://instagram.com/hjmgfyls2" }
+      { "platform": "Instagram", "handle": "@hjmgfyls2", "url": "https://instagram.com/hjmgfyls2" },
+      { "platform": "TikTok", "handle": "@hjmgfyls9", "url": "https://www.tiktok.com/@hjmgfyls9" }
     ],
     "comment": "見つけてくれてありがとう。少しでも私のことを気になってくれたなら、その気持ちを「いいね」で届けてくれたら嬉しいです。次のステージの夢を一緒に叶えてください。"
   },
@@ -370,7 +396,8 @@
     "hobby": "小説を書くこと、猫を愛でること",
     "mbti": "INFJ-T",
     "sns": [
-      { "platform": "Instagram", "handle": "@yuua_yagi", "url": "https://instagram.com/yuua_yagi" }
+      { "platform": "Instagram", "handle": "@yuua_yagi", "url": "https://instagram.com/yuua_yagi" },
+      { "platform": "TikTok", "handle": "@yuua_yagi", "url": "https://www.tiktok.com/@yuua_yagi" }
     ],
     "comment": "Beautyとは、Sexyとは。 ひとによって答えは様々だと思います。 オーディションを通して自分の魅力をお見せするだけでなく、それぞれのCharmの意味についても深く考えていきたいです。"
   },
@@ -385,7 +412,8 @@
     "hobby": "コーディネートを考えること",
     "mbti": "ISFP",
     "sns": [
-      { "platform": "Instagram", "handle": "@na22_kiii", "url": "https://instagram.com/na22_kiii" }
+      { "platform": "Instagram", "handle": "@na22_kiii", "url": "https://instagram.com/na22_kiii" },
+      { "platform": "TikTok", "handle": "@natsuki_622", "url": "https://www.tiktok.com/@natsuki_622" }
     ],
     "comment": "私のパフォーマンスを通して誰かの心の支えになれるよう、全力で楽しんで頑張ります！宜しくお願いします！"
   },
