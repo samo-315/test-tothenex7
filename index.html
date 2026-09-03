@@ -695,6 +695,7 @@ function render(){
         <div class="profile-name">
           <span class="name">${p.name}</span>
           <span class="reading">${p.reading}</span>
+          ${p.withdrawalNote ? `<span class="withdrawal-note">※${p.withdrawalNote}</span>` : ""}
         </div>
         <div class="profile-grid">
           <div class="pf-item"><span class="pf-label">生年月日</span><b>${p.birthday}</b></div>
