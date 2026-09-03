@@ -31,6 +31,8 @@
       { "platform": "TikTok", "handle": "@y__16u", "url": "https://www.tiktok.com/@y__16u" }
     ],
     "comment": "moxymillを一緒に盛り上げていけるよう、今まで培った経験を活かして頑張ります。 応援よろしくお願い致します！",
+    "danceSongs": [1, 4],
+    "vocalSongs": [5, 6],
     "finalRank":19
   },
   {
@@ -48,6 +50,8 @@
       { "platform": "TikTok", "handle": "@_bemyma", "url": "https://www.tiktok.com/@_bemyma" }
     ],
     "comment": "moxymillさんの魅力の一つである【Charm】という存在に、とても惹かれました！ 唯一無二のグループの魅力をさらに高められる、そんな存在になりたいです！ 皆さん応援よろしくお願いします！",
+    "danceSongs": [4, 5],
+    "vocalSongs": [3, 4],
     "finalRank":2
   },
   {
@@ -64,7 +68,9 @@
       { "platform": "TikTok", "handle": "@kiiiiiiiiii0915", "url": "https://www.tiktok.com/@kiiiiiiiiii0915" }
     ],
     "comment": "緊張してますが、moxymillの皆さんが大切にされてきた楽曲へのリスペクトを忘れず、自分の表現としてしっかりとお届けできるよう挑戦したいです。",
-  "finalRank":11
+    "danceSongs": [1, 4],
+    "vocalSongs": [5, 6],
+    "finalRank":11
   },
   {
     "normalId": "slE8GhOw3IU",
@@ -82,6 +88,8 @@
       { "platform": "X(旧Twitter)", "handle": "@eMJ7fCtvGIspx1s", "url": "https://www.x.com/eMJ7fCtvGIspx1s" }
     ],
     "comment": "こんにちは！ぼけーっとしてるので何を考えてるか分からないと言われますが、歌っている時や踊っている時はびっくりするギャップをお届けします。 目指せ！デビュー！よろしくお願いします！",
+    "danceSongs": [5, 6],
+    "vocalSongs": [3, 4],
     "finalRank":14
   },
   {
@@ -99,6 +107,8 @@
       { "platform": "TikTok", "handle": "@erina_07.29", "url": "https://www.tiktok.com/@erina_07.29" }
     ],
     "comment": "どんな環境でも1つ1つの経験を大切にしながら挑戦し続けています。 仲間と共に応援してくださる方に感動や笑顔を届けられるアーティストを目指します。",
+    "danceSongs": [3, 5],
+    "vocalSongs": [1, 4],
     "finalRank":6
   },
   {
@@ -117,6 +127,8 @@
       { "platform": "X(旧Twitter)", "handle": "@mm_ino7", "url": "https://www.x.com/mm_ino7" }
     ],
     "comment": "歌うこと、踊ることが大好きです！何度も挑戦を続けてきたからこそ、このチャンスを大切にしたいです。私らしいパフォーマンスを全力で届けます！",
+    "danceSongs": [3, 5],
+    "vocalSongs": [1, 2],
     "finalRank":16
   },
   {
@@ -135,6 +147,8 @@
       { "platform": "X(旧Twitter)", "handle": "@lixpopo", "url": "https://www.x.com/lixpopo" }
     ],
     "comment": "歌ダンス共に未経験なので他のみんなより実力は劣っているとは思いますが、たくさん色んなことを吸収してカメレオンアイドルになります！推してくれたらうれシーサー‼️",
+    "danceSongs": [1, 6],
+    "vocalSongs": [3, 4],
     "finalRank":20
   },
   {
@@ -152,6 +166,8 @@
       { "platform": "TikTok", "handle": "@uniiq.7", "url": "https://www.tiktok.com/@uniiq.7" }
     ],
     "comment": "このオーディションを知って、諦めた夢にもう一度挑戦したいと思えました。歌もダンスもまだ未熟ですが、人を笑顔にし、応援してくださる方へ恩返しができるアーティストになりたいです。応援よろしくお願いします。",
+    "danceSongs": [4, 5],
+    "vocalSongs": [2, 3],
     "finalRank":5
   },
   {
@@ -169,6 +185,8 @@
       { "platform": "TikTok", "handle": "@mil0ah", "url": "https://www.tiktok.com/@mil0ah" }
     ],
     "comment": "169cmの存在感と唯一無二のキャラクターで皆さんをメロメロにさせちゃいます。まだまだ未完成ですが誰よりも成長して「moxymill MIRUA」になるまでの過程を見守っていてください!",
+    "danceSongs": [2, 6],
+    "vocalSongs": [1, 4],
     "finalRank":21
   },
   {
@@ -187,6 +205,8 @@
       { "platform": "X(旧Twitter)", "handle": "@ch_han087", "url": "https://www.x.com/ch_han087" }
     ],
     "comment": "人生かけよう、今しかない、この思いで応募しました。自分が辛い時に救われた分、誰かの明日を照らせる存在になりたい。moxymillとして大きなステージを目指したい。自分らしく、全力で頑張ります⟡",
+    "danceSongs": [3, 6],
+    "vocalSongs": [4, 5],
     "finalRank":3
   },
   {
@@ -203,6 +223,8 @@
       { "platform": "X(旧Twitter)", "handle": "@_xxmmaoxx_", "url": "https://www.x.com/_xxmmaoxx_" }
     ],
     "comment": "明るさと、負けず嫌いでコツコツ努力できるところが私の強みです。自分らしさを全力で届け、「もっと見たい」「応援したい」と思ってもらえる存在を目指します！",
+    "danceSongs": [2, 5],
+    "vocalSongs": [1, 3],
     "finalRank":26
   },
   {
@@ -219,6 +241,8 @@
       { "platform": "TikTok", "handle": "@wlrb_haru", "url": "https://www.tiktok.com/@wlrb_haru" }
     ],
     "comment": "ひとつひとつの出会いと経験を大切にし、「私らしい」を表現した音楽を皆さんに届けたいです！！",
+    "danceSongs": [3, 6],
+    "vocalSongs": [2, 4],
     "finalRank":27
   },
   {
@@ -236,6 +260,8 @@
       { "platform": "TikTok", "handle": "@hiyo__050", "url": "https://www.tiktok.com/@hiyo__050" }
     ],
     "comment": "これまでメンバーの皆さんが積み重ねてこられた時間や思いを大切にして、リスペクトの気持ちを持って頑張りたいです。自分が新しい色になれるように、精一杯頑張ります。よろしくお願いいたします。",
+    "danceSongs": [2, 4],
+    "vocalSongs": [5, 6],
     "finalRank":12
   },
   {
@@ -254,6 +280,8 @@
       { "platform": "X(旧Twitter)", "handle": "@yuyu__dance", "url": "https://www.x.com/yuyu__dance" }
     ],
     "comment": "私らしく笑顔で感謝を忘れず 全力で最後まで頑張ります！！！ 是非あたたかく見守って下さい‎𖤐 ̖́-‬ 宜しくお願い致します！！",
+    "danceSongs": [1, 4],
+    "vocalSongs": [2, 5],
     "finalRank":15
   },
   {
@@ -272,6 +300,8 @@
       { "platform": "X(旧Twitter)", "handle": "@nanacon__26", "url": "https://www.x.com/nanacon__26" }
     ],
     "comment": "私はmoxymillさんが大好きです。候補生の誰よりも愛を語れる自信があります。そして私は全国高校ソロダンスバトルで日本1をとったことがあります！ロックダンスなら私にお任せ下さい。",
+    "danceSongs": [3, 4],
+    "vocalSongs": [2, 5],
     "finalRank":8
   },
   {
@@ -290,6 +320,8 @@
       { "platform": "X(旧Twitter)", "handle": "@yuika_046", "url": "https://www.x.com/yuika_046" }
     ],
     "comment": "一瞬一瞬を大切に、見てくださる方の心を動かせるよう精一杯頑張ります。よろしくお願いします。",
+    "danceSongs": [2, 4],
+    "vocalSongs": [3, 5],
     "finalRank":17
   },
   {
@@ -306,6 +338,8 @@
       { "platform": "Instagram", "handle": "@a12dance07", "url": "https://instagram.com/a12dance07" }
     ],
     "comment": "初めまして、前川愛莉です。 このオーディションを通して、一人でも多くの方に素敵な音楽を届けられるよう、そしてmoxymillの新メンバーに選んでいただけるよう、これまでの経験を活かして精一杯頑張ります。 よろしくお願いいたします。",
+    "danceSongs": [3, 6],
+    "vocalSongs": [2, 4],
     "finalRank":1
   },
   {
@@ -323,6 +357,8 @@
       { "platform": "TikTok", "handle": "@airi_nabi", "url": "https://www.tiktok.com/@airi_nabi" }
     ],
     "comment": "絶対デビュー勝ち取ります！ 自分らしく精一杯頑張るのでよろしくお願いします！",
+    "danceSongs": [5, 6],
+    "vocalSongs": [1, 3],
     "finalRank":10
   },
   {
@@ -339,6 +375,8 @@
       { "platform": "Instagram", "handle": "@meika.615", "url": "https://instagram.com/meika.615" }
     ],
     "comment": "見てくださる方々の心に届くように自分の強みである世界観と表現力を活かして精一杯頑張ります！！",
+    "danceSongs": [3, 6],
+    "vocalSongs": [2, 5],
     "finalRank":9
   },
   {
@@ -356,6 +394,8 @@
       { "platform": "TikTok", "handle": "@aimomo_22", "url": "https://www.tiktok.com/@aimomo_22" }
     ],
     "comment": "私にしかできない表現で、たくさんの方の心を動かせる存在になりたいです。歌とダンスを通して、私らしい魅力を届けmoxymillのメンバーとして輝けるよう全力で頑張ります。応援よろしくお願いします！",
+    "danceSongs": [1, 5],
+    "vocalSongs": [4, 6],
     "finalRank":23
   },
   {
@@ -373,6 +413,8 @@
       { "platform": "TikTok", "handle": "@n00__i", "url": "https://www.tiktok.com/@n00__i" }
     ],
     "comment": "私はあなたの希望の羽のような存在になりたいです。幼いころから目指してきた夢でやっとスタートラインに立てました。ありのままの姿で表現して、向き合って、継いで、新しい未来へ共に駆け抜けたいです！",
+    "danceSongs": [1, 4],
+    "vocalSongs": [3, 6],
     "finalRank":7
   },
   {
@@ -390,6 +432,8 @@
       { "platform": "X(旧Twitter)", "handle": "@yua_yw", "url": "https://www.x.com/@yua_yw" }
     ],
     "comment": "夢を夢のままで終わらせず、誰かの背中を押せる存在を目指します。moxymillの皆さんと最高の舞台に立ち、最高の景色を見られる日を夢見て、全力で挑戦します！",
+    "danceSongs": [2, 6],
+    "vocalSongs": [1, 2],
     "finalRank":25
   },
   {
@@ -407,6 +451,8 @@
       { "platform": "TikTok", "handle": "@hjmgfyls9", "url": "https://www.tiktok.com/@hjmgfyls9" }
     ],
     "comment": "見つけてくれてありがとう。少しでも私のことを気になってくれたなら、その気持ちを「いいね」で届けてくれたら嬉しいです。次のステージの夢を一緒に叶えてください。",
+    "danceSongs": [3, 5],
+    "vocalSongs": [1, 6],
     "finalRank":4
   },
   {
@@ -424,6 +470,8 @@
       { "platform": "TikTok", "handle": "@yuua_yagi", "url": "https://www.tiktok.com/@yuua_yagi" }
     ],
     "comment": "Beautyとは、Sexyとは。 ひとによって答えは様々だと思います。 オーディションを通して自分の魅力をお見せするだけでなく、それぞれのCharmの意味についても深く考えていきたいです。",
+    "danceSongs": [1, 2],
+    "vocalSongs": [1, 4],
     "finalRank":24
   },
   {
@@ -441,6 +489,8 @@
       { "platform": "TikTok", "handle": "@natsuki_622", "url": "https://www.tiktok.com/@natsuki_622" }
     ],
     "comment": "私のパフォーマンスを通して誰かの心の支えになれるよう、全力で楽しんで頑張ります！宜しくお願いします！",
+    "danceSongs": [1, 3],
+    "vocalSongs": [2, 5],
     "finalRank":13
   },
   {
@@ -458,6 +508,8 @@
       { "platform": "TikTok", "handle": "@veli_923", "url": "https://www.tiktok.com/@veli_923" }
     ],
     "comment": "このオーディションにかける想いは人一倍‼︎ 一生懸命、楽しくをモットーに最後まで頑張ります！よろしくお願いします！",
+    "danceSongs": [1, 2],
+    "vocalSongs": [1, 6],
     "finalRank":22
   }
 ]
