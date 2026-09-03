@@ -491,8 +491,9 @@
   font-size: 10.5px;
   font-weight: 700;
   color: var(--ink-soft);
-  width: 34px;
+  width: 44px;
   flex-shrink:0;
+  white-space: nowrap;
 }
 .song-popover-jackets{
   display:flex;
@@ -840,9 +841,47 @@ function renderRanking(){
   gridEl.querySelectorAll(".rank-song-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      openSongPopover(Number(btn.dataset.idx), btn);
+      const idx = Number(btn.dataset.idx);
+      if(songPopoverEl.classList.contains("open") && songPopoverOpenIdx === idx){
+        closeSongPopover();
+      }else{
+        openSongPopover(idx, btn);
+      }
     });
   });
+}
+
+/* ============================================================
+   複数ポップアップ共通のスクロールロック(何個開いているか数える方式)
+   ============================================================ */
+
+let bodyLockCount = 0;
+let bodyLockScrollY = 0;
+
+function lockBodyScroll(){
+  if(bodyLockCount === 0){
+    bodyLockScrollY = window.scrollY;
+    document.body.classList.add("modal-open");
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${bodyLockScrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+  }
+  bodyLockCount++;
+}
+
+function unlockBodyScroll(){
+  bodyLockCount = Math.max(0, bodyLockCount - 1);
+  if(bodyLockCount === 0){
+    document.body.classList.remove("modal-open");
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    window.scrollTo(0, bodyLockScrollY);
+  }
 }
 
 /* ============================================================
@@ -850,7 +889,7 @@ function renderRanking(){
    ============================================================ */
 
 const songPopoverEl = document.getElementById("songPopover");
-let songPopoverScrollY = 0;
+let songPopoverOpenIdx = null; // 現在開いている人のインデックス(同じボタン再タップで閉じるため)
 
 document.addEventListener("click", (e) => {
   if(!songPopoverEl.classList.contains("open")) return;
@@ -859,6 +898,8 @@ document.addEventListener("click", (e) => {
 });
 
 async function openSongPopover(idx, btnEl){
+  const alreadyOpen = songPopoverEl.classList.contains("open");
+  songPopoverOpenIdx = idx;
   const p = people[idx];
   const list = await ensureSongsLoaded();
   const findJacket = (songId) => {
@@ -885,6 +926,10 @@ async function openSongPopover(idx, btnEl){
   `;
 
   // 位置を計算する(ボタンの真上に配置)
+  // ロック中(bodyがposition:fixed)はwindow.scrollYが常に0を返すため、
+  // その場合は記憶しておいたスクロール位置を使う
+  const effectiveScrollY = bodyLockCount > 0 ? bodyLockScrollY : window.scrollY;
+
   songPopoverEl.style.visibility = "hidden";
   songPopoverEl.classList.add("open");
   const rect = btnEl.getBoundingClientRect();
@@ -895,32 +940,24 @@ async function openSongPopover(idx, btnEl){
   const maxLeft = document.documentElement.clientWidth - popRect.width - 8 + window.scrollX;
   left = Math.max(minLeft, Math.min(left, maxLeft));
 
-  const top = rect.top + window.scrollY - popRect.height - 8;
+  const top = rect.top + effectiveScrollY - popRect.height - 8;
 
   songPopoverEl.style.left = `${left}px`;
   songPopoverEl.style.top = `${top}px`;
   songPopoverEl.style.visibility = "visible";
 
-  // ポップアップ表示中は、裏の一覧画面がスクロールしないようロックする
-  songPopoverScrollY = window.scrollY;
-  document.body.classList.add("modal-open");
-  document.body.style.position = "fixed";
-  document.body.style.top = `-${songPopoverScrollY}px`;
-  document.body.style.left = "0";
-  document.body.style.right = "0";
-  document.body.style.width = "100%";
+  // 既にこのポップアップ自身が開いている(別の人に切り替えただけ)場合は、
+  // 二重にロックしないようにする
+  if(!alreadyOpen){
+    lockBodyScroll();
+  }
 }
 
 function closeSongPopover(){
+  if(!songPopoverEl.classList.contains("open")) return;
   songPopoverEl.classList.remove("open");
-
-  document.body.classList.remove("modal-open");
-  document.body.style.position = "";
-  document.body.style.top = "";
-  document.body.style.left = "";
-  document.body.style.right = "";
-  document.body.style.width = "";
-  window.scrollTo(0, songPopoverScrollY);
+  songPopoverOpenIdx = null;
+  unlockBodyScroll();
 }
 
 /* ============================================================
@@ -1021,35 +1058,17 @@ function buildProfileHtml(p){
   `;
 }
 
-let profileScrollY = 0; // プロフィールポップアップ用のスクロール位置記憶(グラフ側とは独立)
-
 function openProfileModal(idx){
   const p = people[idx];
   profileModalTitleEl.textContent = p.name;
   profileModalBodyEl.innerHTML = buildProfileHtml(p);
   profileModalOverlayEl.classList.add("open");
-
-  // ポップアップ表示中は、裏の一覧画面がスクロールしないようロックする
-  profileScrollY = window.scrollY;
-  document.body.classList.add("modal-open");
-  document.body.style.position = "fixed";
-  document.body.style.top = `-${profileScrollY}px`;
-  document.body.style.left = "0";
-  document.body.style.right = "0";
-  document.body.style.width = "100%";
+  lockBodyScroll();
 }
 
 function closeProfileModal(){
   profileModalOverlayEl.classList.remove("open");
-
-  // 背景のスクロールロックを解除し、元の位置に戻す
-  document.body.classList.remove("modal-open");
-  document.body.style.position = "";
-  document.body.style.top = "";
-  document.body.style.left = "";
-  document.body.style.right = "";
-  document.body.style.width = "";
-  window.scrollTo(0, profileScrollY);
+  unlockBodyScroll();
 }
 
 document.getElementById("profileModalClose").addEventListener("click", closeProfileModal);
@@ -1194,8 +1213,6 @@ periodToolbarEl.querySelectorAll(".period-btn").forEach(btn => {
   });
 });
 
-let modalScrollY = 0; // モーダルを開いた瞬間のスクロール位置を覚えておく
-
 async function openGraphModal(idx){
   const isShorts = currentTab === "shorts";
   const idKey = isShorts ? "shortsId" : "normalId";
@@ -1205,16 +1222,7 @@ async function openGraphModal(idx){
 
   modalTitleEl.textContent = `${person.name}(${isShorts ? "ショート" : "通常動画"})`;
   modalOverlayEl.classList.add("open");
-
-  // ポップアップ表示中は、裏の一覧画面がスクロールしないようロックする
-  // (iOS Safariではoverflow:hiddenだけでは確実に効かないため、position:fixedで固定する)
-  modalScrollY = window.scrollY;
-  document.body.classList.add("modal-open");
-  document.body.style.position = "fixed";
-  document.body.style.top = `-${modalScrollY}px`;
-  document.body.style.left = "0";
-  document.body.style.right = "0";
-  document.body.style.width = "100%";
+  lockBodyScroll();
 
   // モーダルを開くたびに期間選択は「7日」にリセット
   modalPeriodDays = "7";
@@ -1227,15 +1235,7 @@ async function openGraphModal(idx){
 
 function closeGraphModal(){
   modalOverlayEl.classList.remove("open");
-
-  // 背景のスクロールロックを解除し、元の位置に戻す
-  document.body.classList.remove("modal-open");
-  document.body.style.position = "";
-  document.body.style.top = "";
-  document.body.style.left = "";
-  document.body.style.right = "";
-  document.body.style.width = "";
-  window.scrollTo(0, modalScrollY);
+  unlockBodyScroll();
 }
 
 document.getElementById("modalClose").addEventListener("click", closeGraphModal);
@@ -1364,4 +1364,5 @@ async function fetchStatsLive(){
 */
 </script>
 </body>
+</html>
 </html>
