@@ -751,13 +751,14 @@ function render(){
 
   gridEl.innerHTML = people.map((p, idx) => {
     const vid = p[idKey];
-    const thumbUrl = vid ? `https://img.youtube.com/vi/${vid}/mqdefault.jpg` : "";
+    const thumbUrl = vid ? `https://img.youtube.com/vi/${vid}/maxresdefault.jpg` : "";
+    const thumbFallback = vid ? `https://img.youtube.com/vi/${vid}/hqdefault.jpg` : "";
     return `
     <div class="card">
       <div class="video-wrap ${isShorts ? 'ratio-9-16' : 'ratio-16-9'}"
            data-idx="${idx}" data-id="${vid}">
         ${vid
-          ? `<img src="${thumbUrl}" alt="${p.name}" loading="lazy"><div class="play-badge"></div>`
+          ? `<img src="${thumbUrl}" alt="${p.name}" loading="lazy" onerror="this.onerror=null;this.src='${thumbFallback}';"><div class="play-badge"></div>`
           : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:12px;">動画IDが未設定です</div>`
         }
       </div>
@@ -1079,11 +1080,12 @@ async function renderArchive(){
   const sorted = [...list].sort((a, b) => new Date(a.publishedAt) - new Date(b.publishedAt));
 
   gridEl.innerHTML = sorted.map((m) => {
-    const thumbUrl = `https://img.youtube.com/vi/${m.id}/mqdefault.jpg`;
+    const thumbUrl = `https://img.youtube.com/vi/${m.id}/maxresdefault.jpg`;
+    const thumbFallback = `https://img.youtube.com/vi/${m.id}/hqdefault.jpg`;
     return `
     <div class="card">
       <div class="video-wrap ratio-16-9" data-id="${m.id}">
-        <img src="${thumbUrl}" alt="${m.title}" loading="lazy"><div class="play-badge"></div>
+        <img src="${thumbUrl}" alt="${m.title}" loading="lazy" onerror="this.onerror=null;this.src='${thumbFallback}';"><div class="play-badge"></div>
       </div>
       <div class="archive-info">
         <div class="archive-title">${m.title}</div>
