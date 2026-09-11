@@ -1284,6 +1284,7 @@ function renderTabsForPhase(phaseId){
 
 phaseSelectEl.addEventListener("change", () => {
   renderTabsForPhase(phaseSelectEl.value);
+  phaseSelectEl.blur(); // 選択後に色が残り続けないよう、フォーカスを外す
 });
 
 archiveBtnEl.addEventListener("click", () => {
