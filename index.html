@@ -635,59 +635,59 @@
 }
 
 /* グループ審査: 1曲あたり2グループのコンパクト表示 */
-.group-pair{
-  padding-top: 12px;
-  margin-top: 12px;
-  border-top: 1px solid var(--line);
+.group-split{
+  display:flex;
+  gap: 14px;
 }
-.group-pair:first-of-type{
-  padding-top: 0;
-  margin-top: 0;
-  border-top: none;
+.group-half{
+  flex: 1;
+  min-width: 0;
+}
+.group-half:first-child{
+  padding-right: 14px;
+  border-right: 1px solid var(--line);
 }
 .group-pair-title{
   font-family: 'Zen Kaku Gothic New', sans-serif;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
-.group-pos-row{
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  margin-bottom: 8px;
+.group-pos-block{
+  margin-bottom: 12px;
 }
-.group-pos-row:last-child{ margin-bottom: 0; }
+.group-pos-block:last-child{ margin-bottom: 0; }
 .group-pos-tag{
-  flex-shrink:0;
-  width: 50px;
+  display:block;
   font-size: 10px;
   font-weight: 700;
   color: var(--ink-soft);
+  margin-bottom: 6px;
 }
 .group-pos-people{
   display:flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
 }
 .group-pos-person{
   display:flex;
   align-items:center;
-  gap: 6px;
+  gap: 8px;
 }
 .group-pos-person img{
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   object-fit: cover;
   background: var(--bg);
   flex-shrink: 0;
 }
 .group-pos-person span{
-  font-size: 11.5px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--ink);
+  line-height: 1.3;
 }
 .group-pos-empty{
   font-size: 11px;
@@ -1344,13 +1344,13 @@ async function renderGroupSongs(){
       const centerPeople = peopleWithGroup.filter(({ parsed }) => parsed && parsed.letter === letter && parsed.position === "CENTER");
       const sexyPeople = peopleWithGroup.filter(({ parsed }) => parsed && parsed.letter === letter && parsed.position === "SEXY");
       return `
-      <div class="group-pair">
+      <div class="group-half">
         <div class="group-pair-title">${letter}グループ</div>
-        <div class="group-pos-row">
+        <div class="group-pos-block">
           <span class="group-pos-tag">CENTER</span>
           <div class="group-pos-people">${renderMiniPeople(centerPeople)}</div>
         </div>
-        <div class="group-pos-row">
+        <div class="group-pos-block">
           <span class="group-pos-tag">SEXY</span>
           <div class="group-pos-people">${renderMiniPeople(sexyPeople)}</div>
         </div>
@@ -1364,7 +1364,7 @@ async function renderGroupSongs(){
         <div class="song-title">${song ? song.title : "課題曲未設定"}</div>
         <div class="song-genre">${song ? song.genre : ""}</div>
       </div>
-      ${pairsHtml}
+      <div class="group-split">${pairsHtml}</div>
     </div>`;
   }).join("");
 }
