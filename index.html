@@ -513,6 +513,11 @@
   font-size: 15px;
   color: var(--ink);
 }
+.rank-name-btn .solo-rank-numbers{
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
 
 .rank-song-btn{
   margin-left: auto;
@@ -696,7 +701,7 @@
     <select id="phaseSelect" class="phase-select">
       <option value="individual">個人動画審査</option>
       <option value="solo">ソロ審査</option>
-      <option value="group" disabled>グループ審査(coming soon...)</option>
+      <option value="group">グループ審査</option>
       <option value="final" disabled>最終審査(coming soon...)</option>
     </select>
     <button class="archive-btn" id="archiveBtn">📁 アーカイブ</button>
@@ -792,12 +797,24 @@ function render(){
     renderSummary();
     return;
   }
-  if(currentTab === "ranking" || currentTab === "ranking-solo" || currentTab === "ranking-interim"){
+  if(currentTab === "ranking" || currentTab === "ranking-solo"){
     renderRanking();
+    return;
+  }
+  if(currentTab === "ranking-interim"){
+    renderSoloOverallRanking();
+    return;
+  }
+  if(currentTab === "performance"){
+    renderPerformance();
     return;
   }
   if(currentTab === "songs"){
     renderSongs();
+    return;
+  }
+  if(currentTab === "group-songs"){
+    renderGroupSongs();
     return;
   }
   if(currentTab === "archive"){
@@ -897,8 +914,11 @@ function renderSummary(){
 const rankingConfig = {
   "ranking": { field: "kojinRank", showSongBtn: false },
   "ranking-solo": { field: "kojinRank", showSongBtn: true },
-  "ranking-interim": { field: "solovoRank", showSongBtn: true },
 };
+
+function hasRank(p, field){
+  return p[field] !== undefined && p[field] !== null && p[field] !== "";
+}
 
 function renderRanking(){
   const config = rankingConfig[currentTab] || rankingConfig["ranking"];
@@ -925,7 +945,7 @@ function renderRanking(){
         <span class="rank-reading">${p.reading}</span>
         <span class="rank-name">${p.name}</span>
       </button>
-      ${(!p.withdrawalNote && showSongBtn) ? `<button class="rank-song-btn" data-idx="${idx}">課題曲</button>` : ""}
+      ${(showSongBtn && hasRank(p, "solovoRank")) ? `<button class="rank-song-btn" data-idx="${idx}">課題曲</button>` : ""}
     </div>`;
   }).join("");
 
@@ -942,6 +962,84 @@ function renderRanking(){
         openSongPopover(idx, btn);
       }
     });
+  });
+}
+
+/* ============================================================
+   個人審査ランキング(ボーカル・ダンス・総合順位)
+   ============================================================ */
+
+function fmtRankOrDash(v){
+  return (v !== undefined && v !== null && v !== "") ? `${v}位` : "--";
+}
+
+function renderSoloOverallRanking(){
+  const rows = people
+    .map((p, idx) => ({ p, idx }))
+    .filter(({ p }) => hasRank(p, "solotoRank"))
+    .sort((a, b) => Number(a.p.solotoRank) - Number(b.p.solotoRank));
+
+  if(rows.length === 0){
+    gridEl.innerHTML = `<div class="modal-empty">まだ個人審査ランキングが設定されていません。</div>`;
+    return;
+  }
+
+  gridEl.innerHTML = rows.map(({ p, idx }) => {
+    const photoFile = `images/person${String(idx + 1).padStart(2, "0")}.jpg`;
+    return `
+    <div class="rank-row">
+      <img class="rank-photo" src="${photoFile}" alt="${p.name}" loading="lazy">
+      <button class="rank-name-btn" data-idx="${idx}">
+        <span class="rank-reading">${p.reading}</span>
+        <span class="rank-name">${p.name}</span>
+        <span class="solo-rank-numbers">総合 ${fmtRankOrDash(p.solotoRank)} ・ ボーカル ${fmtRankOrDash(p.solovoRank)} ・ ダンス ${fmtRankOrDash(p.solodaRank)}</span>
+      </button>
+    </div>`;
+  }).join("");
+
+  gridEl.querySelectorAll(".rank-name-btn").forEach(btn => {
+    btn.addEventListener("click", () => openProfileModal(Number(btn.dataset.idx)));
+  });
+}
+
+/* ============================================================
+   パフォーマンス(ボーカル順位が高い順に動画を並べる)
+   ============================================================ */
+
+function renderPerformance(){
+  const rows = people
+    .map((p, idx) => ({ p, idx }))
+    .filter(({ p }) => p.performance)
+    .sort((a, b) => {
+      const ra = hasRank(a.p, "solovoRank") ? Number(a.p.solovoRank) : Infinity;
+      const rb = hasRank(b.p, "solovoRank") ? Number(b.p.solovoRank) : Infinity;
+      return ra - rb;
+    });
+
+  if(rows.length === 0){
+    gridEl.innerHTML = `<div class="modal-empty">まだパフォーマンス動画が登録されていません。</div>`;
+    return;
+  }
+
+  gridEl.innerHTML = rows.map(({ p, idx }) => {
+    const vid = p.performance;
+    const thumbUrl = `https://img.youtube.com/vi/${vid}/maxresdefault.jpg`;
+    const thumbFallback = `https://img.youtube.com/vi/${vid}/hqdefault.jpg`;
+    const rankLabel = hasRank(p, "solovoRank") ? ` ・ ボーカル ${p.solovoRank}位` : "";
+    return `
+    <div class="card">
+      <div class="video-wrap ratio-16-9" data-id="${vid}">
+        <img src="${thumbUrl}" alt="${p.name}" loading="lazy" onerror="this.onerror=null;this.src='${thumbFallback}';"><div class="play-badge"></div>
+      </div>
+      <div class="archive-info">
+        <div class="archive-title">${p.name}</div>
+        <div class="archive-date">${p.reading}${rankLabel}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  gridEl.querySelectorAll(".video-wrap").forEach(el => {
+    el.addEventListener("click", onPlayClick, { once: true });
   });
 }
 
@@ -1120,6 +1218,70 @@ async function renderSongs(){
 }
 
 /* ============================================================
+   グループ審査: 課題曲(CENTER / SEXY)
+   ============================================================ */
+
+// グループコードの1文字目(A〜J)が、どの課題曲(songs.jsonのid)に対応するか
+const GROUP_LETTER_TO_SONG_ID = {
+  A: 3, B: 3,
+  C: 5, D: 5,
+  E: 1, F: 1,
+  G: 2, H: 2,
+  I: 4, J: 4,
+};
+// グループコードの2文字目(1 or 2)が、どのポジションに対応するか
+const GROUP_DIGIT_TO_POSITION = { "1": "CENTER", "2": "SEXY" };
+
+function parseGroupCode(code){
+  if(!code || code.length < 2) return null;
+  const letter = code.charAt(0).toUpperCase();
+  const digit = code.charAt(1);
+  const songId = GROUP_LETTER_TO_SONG_ID[letter];
+  const position = GROUP_DIGIT_TO_POSITION[digit];
+  if(!songId || !position) return null;
+  return { songId, position };
+}
+
+async function renderGroupSongs(){
+  gridEl.innerHTML = `<div class="modal-empty">読み込み中...</div>`;
+
+  const list = await ensureSongsLoaded();
+  if(!list || list.length === 0){
+    gridEl.innerHTML = `<div class="modal-empty">課題曲の情報がまだ設定されていません。</div>`;
+    return;
+  }
+
+  // グループ審査で使われる5曲だけ、重複なしで対象にする
+  const usedSongIds = [...new Set(Object.values(GROUP_LETTER_TO_SONG_ID))];
+
+  gridEl.innerHTML = usedSongIds.map(songId => {
+    const song = list.find(s => s.id === songId);
+    if(!song) return "";
+
+    const peopleWithGroup = people.map((p, idx) => ({ p, idx, parsed: parseGroupCode(p.group) }));
+    const centerPeople = peopleWithGroup.filter(({ parsed }) => parsed && parsed.songId === songId && parsed.position === "CENTER");
+    const sexyPeople = peopleWithGroup.filter(({ parsed }) => parsed && parsed.songId === songId && parsed.position === "SEXY");
+
+    return `
+    <div class="song-card">
+      <div class="song-header">
+        <img class="song-jacket" src="${song.jacket}" alt="${song.title}" loading="lazy">
+        <div class="song-title">${song.title}</div>
+        <div class="song-genre">${song.genre}</div>
+      </div>
+      <div class="song-section">
+        <div class="song-section-label">CENTER</div>
+        <div class="assignee-grid">${renderAssigneeGrid(centerPeople)}</div>
+      </div>
+      <div class="song-section">
+        <div class="song-section-label">SEXY</div>
+        <div class="assignee-grid">${renderAssigneeGrid(sexyPeople)}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ============================================================
    アーカイブ
    ============================================================ */
 
@@ -1262,10 +1424,13 @@ const phaseTabs = {
   ],
   solo: [
     { key: "ranking-solo", label: "個人動画<br>ランキング" },
-    { key: "ranking-interim", label: "中間順位" },
     { key: "songs", label: "課題曲" },
+    { key: "performance", label: "パフォーマンス" },
+    { key: "ranking-interim", label: "個人審査<br>ランキング" },
   ],
-  group: [],
+  group: [
+    { key: "group-songs", label: "課題曲" },
+  ],
   final: [],
 };
 
