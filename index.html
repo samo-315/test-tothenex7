@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>moxymill tothenex7 候補生一覧</title>
+<title>moxymill tothenex7 まとめ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -466,7 +466,7 @@
     color: #8a5a00;
   }
 
-  /* 最終ランキング */
+  /* 個人動画ランキング */
 .rank-row{
   display:flex;
   align-items:center;
@@ -688,7 +688,7 @@
 
 <header>
   <div class="brand">
-    <h1>to the nex7 候補生一覧</h1>
+    <h1>to the nex7 まとめ</h1>
     <div class="updated-info" id="updatedInfo">データ取得: --</div>
   </div>
   <div class="status-msg" id="statusMsg"></div>
@@ -792,7 +792,7 @@ function render(){
     renderSummary();
     return;
   }
-  if(currentTab === "ranking" || currentTab === "ranking-solo"){
+  if(currentTab === "ranking" || currentTab === "ranking-solo" || currentTab === "ranking-interim"){
     renderRanking();
     return;
   }
@@ -891,18 +891,27 @@ function renderSummary(){
 }
 
 /* ============================================================
-   最終ランキング
+   個人動画ランキング
    ============================================================ */
 
+const rankingConfig = {
+  "ranking": { field: "kojinRank", showSongBtn: false },
+  "ranking-solo": { field: "kojinRank", showSongBtn: true },
+  "ranking-interim": { field: "solovoRank", showSongBtn: true },
+};
+
 function renderRanking(){
-  const showSongBtn = currentTab === "ranking-solo"; // ソロ審査側だけ課題曲ボタンを出す
+  const config = rankingConfig[currentTab] || rankingConfig["ranking"];
+  const rankField = config.field;
+  const showSongBtn = config.showSongBtn;
+
   const rows = people
-    .map((p, idx) => ({ p, idx, rank: p.finalRank }))
+    .map((p, idx) => ({ p, idx, rank: p[rankField] }))
     .filter(r => r.rank !== undefined && r.rank !== null && r.rank !== "")
     .sort((a, b) => Number(a.rank) - Number(b.rank));
 
   if(rows.length === 0){
-    gridEl.innerHTML = `<div class="modal-empty">まだ最終ランキングが設定されていません。</div>`;
+    gridEl.innerHTML = `<div class="modal-empty">まだ個人動画ランキングが設定されていません。</div>`;
     return;
   }
 
@@ -970,7 +979,7 @@ function unlockBodyScroll(){
 }
 
 /* ============================================================
-   最終ランキング: 課題曲ポップアップ(ボタンの真上に表示)
+   個人動画ランキング: 課題曲ポップアップ(ボタンの真上に表示)
    ============================================================ */
 
 const songPopoverEl = document.getElementById("songPopover");
@@ -1252,7 +1261,8 @@ const phaseTabs = {
     { key: "ranking", label: "ランキング" },
   ],
   solo: [
-    { key: "ranking-solo", label: "ランキング" },
+    { key: "ranking-solo", label: "個人動画<br>ランキング" },
+    { key: "ranking-interim", label: "中間順位" },
     { key: "songs", label: "課題曲" },
   ],
   group: [],
