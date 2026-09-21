@@ -711,6 +711,11 @@
     <button class="sort-btn active" data-sort="total">高評価数順</button>
     <button class="sort-btn" data-sort="input">50音順</button>
   </div>
+  <div class="summary-toolbar" id="soloRankToolbar" style="display:none;">
+    <button class="sort-btn" data-field="solovoRank">ボーカル</button>
+    <button class="sort-btn" data-field="solodaRank">ダンス</button>
+    <button class="sort-btn active" data-field="solotoRank">総合</button>
+  </div>
 
   <!--
     再取得ボタンは一旦非表示にしています。復活させたい場合は
@@ -969,30 +974,28 @@ function renderRanking(){
    個人審査ランキング(ボーカル・ダンス・総合順位)
    ============================================================ */
 
-function fmtRankOrDash(v){
-  return (v !== undefined && v !== null && v !== "") ? `${v}位` : "--";
-}
+let soloRankField = "solotoRank"; // 個人審査ランキングで、現在表示中の項目(ボーカル/ダンス/総合)
 
 function renderSoloOverallRanking(){
   const rows = people
-    .map((p, idx) => ({ p, idx }))
-    .filter(({ p }) => hasRank(p, "solotoRank"))
-    .sort((a, b) => Number(a.p.solotoRank) - Number(b.p.solotoRank));
+    .map((p, idx) => ({ p, idx, rank: p[soloRankField] }))
+    .filter(r => hasRank(r.p, soloRankField))
+    .sort((a, b) => Number(a.rank) - Number(b.rank));
 
   if(rows.length === 0){
     gridEl.innerHTML = `<div class="modal-empty">まだ個人審査ランキングが設定されていません。</div>`;
     return;
   }
 
-  gridEl.innerHTML = rows.map(({ p, idx }) => {
+  gridEl.innerHTML = rows.map(({ p, idx, rank }) => {
     const photoFile = `images/person${String(idx + 1).padStart(2, "0")}.jpg`;
     return `
     <div class="rank-row">
+      <div class="rank-num">${rank}</div>
       <img class="rank-photo" src="${photoFile}" alt="${p.name}" loading="lazy">
       <button class="rank-name-btn" data-idx="${idx}">
         <span class="rank-reading">${p.reading}</span>
         <span class="rank-name">${p.name}</span>
-        <span class="solo-rank-numbers">総合 ${fmtRankOrDash(p.solotoRank)} ・ ボーカル ${fmtRankOrDash(p.solovoRank)} ・ ダンス ${fmtRankOrDash(p.solodaRank)}</span>
       </button>
     </div>`;
   }).join("");
@@ -1221,6 +1224,9 @@ async function renderSongs(){
    グループ審査: 課題曲(CENTER / SEXY)
    ============================================================ */
 
+// グループ審査の10グループ(表示順)
+const GROUP_LETTERS = ["A","B","C","D","E","F","G","H","I","J"];
+
 // グループコードの1文字目(A〜J)が、どの課題曲(songs.jsonのid)に対応するか
 const GROUP_LETTER_TO_SONG_ID = {
   A: 3, B: 3,
@@ -1239,7 +1245,7 @@ function parseGroupCode(code){
   const songId = GROUP_LETTER_TO_SONG_ID[letter];
   const position = GROUP_DIGIT_TO_POSITION[digit];
   if(!songId || !position) return null;
-  return { songId, position };
+  return { letter, songId, position };
 }
 
 async function renderGroupSongs(){
@@ -1251,23 +1257,21 @@ async function renderGroupSongs(){
     return;
   }
 
-  // グループ審査で使われる5曲だけ、重複なしで対象にする
-  const usedSongIds = [...new Set(Object.values(GROUP_LETTER_TO_SONG_ID))];
+  const peopleWithGroup = people.map((p, idx) => ({ p, idx, parsed: parseGroupCode(p.group) }));
 
-  gridEl.innerHTML = usedSongIds.map(songId => {
+  gridEl.innerHTML = GROUP_LETTERS.map(letter => {
+    const songId = GROUP_LETTER_TO_SONG_ID[letter];
     const song = list.find(s => s.id === songId);
-    if(!song) return "";
 
-    const peopleWithGroup = people.map((p, idx) => ({ p, idx, parsed: parseGroupCode(p.group) }));
-    const centerPeople = peopleWithGroup.filter(({ parsed }) => parsed && parsed.songId === songId && parsed.position === "CENTER");
-    const sexyPeople = peopleWithGroup.filter(({ parsed }) => parsed && parsed.songId === songId && parsed.position === "SEXY");
+    const centerPeople = peopleWithGroup.filter(({ parsed }) => parsed && parsed.letter === letter && parsed.position === "CENTER");
+    const sexyPeople = peopleWithGroup.filter(({ parsed }) => parsed && parsed.letter === letter && parsed.position === "SEXY");
 
     return `
     <div class="song-card">
       <div class="song-header">
-        <img class="song-jacket" src="${song.jacket}" alt="${song.title}" loading="lazy">
-        <div class="song-title">${song.title}</div>
-        <div class="song-genre">${song.genre}</div>
+        ${song ? `<img class="song-jacket" src="${song.jacket}" alt="${song.title}" loading="lazy">` : ""}
+        <div class="song-title">${letter}グループ</div>
+        <div class="song-genre">${song ? `${song.title}(${song.genre})` : "課題曲未設定"}</div>
       </div>
       <div class="song-section">
         <div class="song-section-label">CENTER</div>
@@ -1398,15 +1402,33 @@ function switchTab(tab){
   });
   archiveBtnEl.classList.remove("active");
   summaryToolbarEl.style.display = tab === "summary" ? "flex" : "none";
+
+  soloRankToolbarEl.style.display = tab === "ranking-interim" ? "flex" : "none";
+  if(tab === "ranking-interim"){
+    // タブに入るたびに表示項目を「総合」にリセットする
+    soloRankField = "solotoRank";
+    soloRankToolbarEl.querySelectorAll(".sort-btn").forEach(b => b.classList.toggle("active", b.dataset.field === "solotoRank"));
+  }
+
   render();
   window.scrollTo(0, 0); // タブ切り替え時は毎回一番上に戻す
 }
 
-document.querySelectorAll(".sort-btn").forEach(b => {
+summaryToolbarEl.querySelectorAll(".sort-btn").forEach(b => {
   b.addEventListener("click", () => {
     summarySortMode = b.dataset.sort;
-    document.querySelectorAll(".sort-btn").forEach(x => x.classList.toggle("active", x === b));
+    summaryToolbarEl.querySelectorAll(".sort-btn").forEach(x => x.classList.toggle("active", x === b));
     renderSummary();
+    window.scrollTo(0, 0); // タブ切り替え時は毎回一番上に戻す
+  });
+});
+
+const soloRankToolbarEl = document.getElementById("soloRankToolbar");
+soloRankToolbarEl.querySelectorAll(".sort-btn").forEach(b => {
+  b.addEventListener("click", () => {
+    soloRankField = b.dataset.field;
+    soloRankToolbarEl.querySelectorAll(".sort-btn").forEach(x => x.classList.toggle("active", x === b));
+    renderSoloOverallRanking();
     window.scrollTo(0, 0); // タブ切り替え時は毎回一番上に戻す
   });
 });
@@ -1446,6 +1468,7 @@ function renderTabsForPhase(phaseId){
     currentTab = null;
     gridEl.innerHTML = `<div class="phase-empty">準備中です。公開までお待ちください。</div>`;
     summaryToolbarEl.style.display = "none";
+    soloRankToolbarEl.style.display = "none";
     archiveBtnEl.classList.remove("active");
     return;
   }
@@ -1471,6 +1494,7 @@ archiveBtnEl.addEventListener("click", () => {
   tabsRowEl.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   currentTab = "archive";
   summaryToolbarEl.style.display = "none";
+  soloRankToolbarEl.style.display = "none";
   render();
   window.scrollTo(0, 0);
 });
